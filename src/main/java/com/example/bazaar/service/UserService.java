@@ -13,10 +13,10 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public void registerUser(User user){
+    public User registerUser(User user){
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setRole("ROLE_USER");
-        userRepository.save(user);
+        return userRepository.save(user);
     }
     
 }
