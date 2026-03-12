@@ -1,0 +1,337 @@
+BazaarApplication.java - ./java\com\example\bazaar\BazaarApplication.java
+*content*
+package com.example.bazaar;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+public class BazaarApplication {
+
+    public static void main(String[] args) {
+        SpringApplication.run(BazaarApplication.class, args);
+    }
+
+}
+
+------------------------------------------------------------
+
+SecurityConfig.java - ./java\com\example\bazaar\config\SecurityConfig.java
+*content*
+package com.example.bazaar.config;
+
+import org.springframework.context.annotation.*;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.*;
+
+@Configuration 
+public class SecurityConfig {
+    @Bean
+    SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
+        http
+            .authorizeHttpRequests(auth->auth
+                .requestMatchers("/register", "/login").permitAll()
+                .anyRequest().authenticated()
+            )
+            .formLogin(login->login
+                .loginPage("/login")
+                .defaultSuccessUrl("/", true)
+                .permitAll()
+            )
+            .logout(logout -> logout
+                .logoutSuccessUrl("/login?logout")
+            );
+        return http.build();
+    }
+
+    @Bean
+    PasswordEncoder passwordEncoder(){
+        return new BCryptPasswordEncoder();
+    }
+}
+
+
+------------------------------------------------------------
+
+AuthController.java - ./java\com\example\bazaar\controller\AuthController.java
+*content*
+package com.example.bazaar.controller;
+
+import com.example.bazaar.model.User;
+import com.example.bazaar.service.UserService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.ui.Model;
+
+@Controller
+@RequiredArgsConstructor
+public class AuthController {
+    private final UserService userService;
+
+    @GetMapping("/register")
+    public String registerPage(Model model){
+        model.addAttribute("user", new User());
+        return "register";
+    }
+    @PostMapping("/register")
+    public String register(@ModelAttribute User user){
+        userService.registerUser(user);
+        return "redirect:/login";
+    }
+    @GetMapping("/login")
+    public String login(){
+        return "login";
+    }
+}
+
+
+------------------------------------------------------------
+
+HomeController.java - ./java\com\example\bazaar\controller\HomeController.java
+*content*
+package com.example.bazaar.controller;
+
+import org.springframework.stereotype.Controller;
+import org. springframework.web.bind.annotation.GetMapping;
+
+@Controller
+public abstract class HomeController {
+    @GetMapping("/")
+    public String home(){
+        return "home";
+    }
+}
+
+
+------------------------------------------------------------
+
+User.java - ./java\com\example\bazaar\model\User.java
+*content*
+package com.example.bazaar.model;
+
+import jakarta.persistence.*;
+import lombok.*;
+import java.time.LocalDateTime;
+
+@Entity
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Table(name = "users")
+public class User {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(unique = true, nullable = false)
+    private String username;
+
+    @Column(unique = true, nullable = false)
+    private String email;
+
+    private String password;
+    private String role;
+    private boolean enabled = true;
+    private LocalDateTime createdAt = LocalDateTime.now();
+}
+
+
+------------------------------------------------------------
+
+UserRepository.java - ./java\com\example\bazaar\repository\UserRepository.java
+*content*
+package com.example.bazaar.repository;
+
+import java.util.Optional;
+import org.springframework.data.jpa.repository.JpaRepository;
+import com.example.bazaar.model.User;
+
+public interface UserRepository extends JpaRepository<User, Long>{
+
+    Optional<User> findByUsername(String username);
+    Optional<User> findByEmail(String email);
+
+}
+
+
+------------------------------------------------------------
+
+CustomUserDetails.java - ./java\com\example\bazaar\security\CustomUserDetails.java
+*content*
+package com.example.bazaar.security;
+
+import com.example.bazaar.model.User;
+import org.springframework.security.core.*;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import java.util.*;
+
+public class CustomUserDetails implements UserDetails {
+    
+    private final User user;
+
+    public CustomUserDetails(User user){
+        this.user = user;
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities(){
+        return List.of(new SimpleGrantedAuthority(user.getRole()));
+    }
+
+    @Override
+    public String getPassword(){
+        return user.getPassword();
+    }
+
+    @Override
+    public String getUsername(){
+        return user.getUsername();
+    }
+
+    @Override
+    public boolean isEnabled(){
+        return user.isEnabled();
+    }
+
+    public User getUser(){
+        return user;
+    }
+}
+
+
+------------------------------------------------------------
+
+CustomUserDetailsService.java - ./java\com\example\bazaar\security\CustomUserDetailsService.java
+*content*
+package com.example.bazaar.security;
+
+import com.example.bazaar.model.User;
+import com.example.bazaar.repository.UserRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.userdetails.*;
+import org.springframework.stereotype.Service;
+
+@Service
+@RequiredArgsConstructor
+public class CustomUserDetailsService implements UserDetailsService {
+    private final UserRepository userRepository;
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException{
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(()-> new UsernameNotFoundException("User not found"));
+        return new CustomUserDetails(user); 
+    }
+}
+
+
+------------------------------------------------------------
+
+UserService.java - ./java\com\example\bazaar\service\UserService.java
+*content*
+package com.example.bazaar.service;
+
+import com.example.bazaar.model.User;
+import com.example.bazaar.repository.UserRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+
+@Service
+@RequiredArgsConstructor
+public class UserService {
+
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
+
+    public void registerUser(User user){
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        user.setRole("ROLE_USER");
+        userRepository.save(user);
+    }
+    
+}
+
+
+------------------------------------------------------------
+
+home.html - ./resources\templates\home.html
+*content*
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<body>
+
+<h1>Welcome to Bazaar</h1>
+
+<a href="/logout">Logout</a>
+
+</body>
+</html>
+
+------------------------------------------------------------
+
+login.html - ./resources\templates\login.html
+*content*
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<body>
+
+<h2>Login</h2>
+
+<form th:action="@{/login}" method="post">
+
+Username
+<input type="text" name="username"/>
+
+Password
+<input type="password" name="password"/>
+
+<button type="submit">Login</button>
+
+</form>
+
+<a href="/register">Register</a>
+
+</body>
+</html>
+
+------------------------------------------------------------
+
+register.html - ./resources\templates\register.html
+*content*
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<body>
+
+<h2>Register</h2>
+
+<form th:action="@{/register}" method="post" th:object="${user}">
+
+Username
+<input type="text" th:field="*{username}" />
+
+Email
+<input type="email" th:field="*{email}" />
+
+Password
+<input type="password" th:field="*{password}" />
+
+<button type="submit">Register</button>
+
+</form>
+
+<a href="/login">Login</a>
+
+</body>
+</html>
+
+------------------------------------------------------------
+
