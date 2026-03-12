@@ -4,9 +4,13 @@ import org.springframework.stereotype.Controller;
 import org. springframework.web.bind.annotation.GetMapping;
 
 @Controller
-public abstract class HomeController {
+public class HomeController {
     @GetMapping("/")
     public String home(){
         return "home";
+    }
+    @GetMapping("/error")
+    public String error(){
+        return "error";
     }
 }

@@ -1,0 +1,16 @@
+package com.example.bazaar.enums;
+
+public enum Category {
+
+    OVERSIZED_SHIRT,
+    POLO_SHIRT,
+    SLIM_FIT_SHIRT,
+    BAGGY_PANT,
+    OVERSIZED_TSHIRT,
+    OVERSIZED_SWEATSHIRT,
+    CROPPED_JACKET,
+    OVERSIZED_HOODIE,
+    LIMITED_OFFER,
+    LIMITED_OFFER_TSHIRT
+
+}

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<body>
+
+<div th:fragment="navbar">
+
+<nav class="navbar">
+
+    <!-- LEFT : LOGO -->
+    <div class="nav-left">
+        <a th:href="@{/}" class="logo">Bazaar</a>
+    </div>
+
+    <!-- CENTER : NAVIGATION LINKS -->
+    <div class="nav-center">
+        <a th:href="@{/products(category='oversized-shirt')}">Oversized Shirt</a>
+        <a th:href="@{/products(category='polo-shirt')}">Polo Shirt</a>
+        <a th:href="@{/products(category='slim-fit-shirt')}">Slim Fit Shirt</a>
+        <a th:href="@{/products(category='baggy-pant')}">Baggy Pant</a>
+        <a th:href="@{/products(category='oversized-tshirt')}">Oversized T-Shirt</a>
+        <a th:href="@{/products(category='oversized-sweatshirt')}">Oversized Sweatshirt</a>
+        <a th:href="@{/products(category='cropped-jacket')}">Cropped Jacket</a>
+        <a th:href="@{/products(category='oversized-hoodie')}">Oversized Hoodie</a>
+        <a th:href="@{/products(category='limited-offer')}">Limited Offer</a>
+        <a th:href="@{/products(category='limited-offer-tshirt')}">Limited Offer T-Shirt</a>
+    </div>
+
+    <!-- RIGHT : ICONS -->
+    <div class="nav-right">
+
+        <a th:href="@{/login}" class="icon">
+            👤
+        </a>
+
+        <a th:href="@{/register}" class="icon">
+            📝
+        </a>
+
+        <a th:href="@{/cart}" class="icon">
+            🛒
+        </a>
+
+    </div>
+
+</nav>
+
+</div>
+
+</body>
+</html>

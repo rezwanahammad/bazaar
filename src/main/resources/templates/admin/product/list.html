@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+
+<body>
+
+<div th:replace="fragments/navbar :: navbar"></div>
+
+<h2>All Products</h2>
+
+<table border="1">
+    <tr>
+        <th>ID</th>
+        <th>Image</th>
+        <th>Name</th>
+        <th>Price</th>
+        <th>Category</th>
+        <th>Actions</th>
+    </tr>
+
+    <tr th:each="p : ${products}">
+        <td th:text="${p.id}"></td>
+        <td>
+            <img th:src="@{${p.imageUrl}}" width="80">
+        </td>
+        <td th:text="${p.name}"></td>
+        <td th:text="${p.price}"></td>
+        <td th:text="${p.category}"></td>
+        <td>
+            <!-- Edit button -->
+            <a th:href="@{/admin/products/{id}/edit(id=${p.id})}">Edit</a>
+
+            <!-- Delete button -->
+            <form th:action="@{/admin/products/{id}(id=${p.id})}" method="post" style="display:inline">
+                <input type="hidden" name="_method" value="delete"/>
+                <button type="submit" onclick="return confirm('Are you sure?')">Delete</button>
+            </form>
+        </td>
+    </tr>
+</table>
+
+<a href="/admin/products/create">Add Product</a>
+
+</body>
+</html>

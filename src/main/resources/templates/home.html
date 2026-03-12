@@ -1,11 +1,15 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 
+<head>
+<link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+
 <body>
 
-<h1>Welcome to Bazaar</h1>
+<div th:replace="fragments/navbar :: navbar"></div>
 
-<a href="/logout">Logout</a>
+<h1>Welcome to Bazaar</h1>
 
 </body>
 </html>
