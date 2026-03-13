@@ -1,48 +1,67 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Products | Bazaar Admin</title>
     <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
-
 <body>
 
-<div th:replace="fragments/navbar :: navbar"></div>
+<div th:replace="fragments/admin-sidebar :: sidebar('products')"></div>
 
-<h2>All Products</h2>
+<div class="admin-content">
 
-<table border="1">
-    <tr>
-        <th>ID</th>
-        <th>Image</th>
-        <th>Name</th>
-        <th>Price</th>
-        <th>Category</th>
-        <th>Actions</th>
-    </tr>
+    <div class="admin-topbar">
+        <h1>Products</h1>
+        <span class="admin-topbar-meta">Manage your store's product catalogue</span>
+    </div>
 
-    <tr th:each="p : ${products}">
-        <td th:text="${p.id}"></td>
-        <td>
-            <img th:src="@{${p.imageUrl}}" width="80">
-        </td>
-        <td th:text="${p.name}"></td>
-        <td th:text="${p.price}"></td>
-        <td th:text="${p.category}"></td>
-        <td>
-            <!-- Edit button -->
-            <a th:href="@{/admin/products/{id}/edit(id=${p.id})}">Edit</a>
+    <div class="admin-body">
 
-            <!-- Delete button -->
-            <form th:action="@{/admin/products/{id}(id=${p.id})}" method="post" style="display:inline">
-                <input type="hidden" name="_method" value="delete"/>
-                <button type="submit" onclick="return confirm('Are you sure?')">Delete</button>
-            </form>
-        </td>
-    </tr>
-</table>
+        <div class="admin-table-wrap">
+            <div class="admin-table-header">
+                <h2>All Products</h2>
+                <a th:href="@{/admin/products/create}" class="admin-btn admin-btn-primary">+ Add Product</a>
+            </div>
 
-<a href="/admin/products/create">Add Product</a>
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Image</th>
+                        <th>Name</th>
+                        <th>Price</th>
+                        <th>Category</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="p : ${products}">
+                        <td th:text="${p.id}"></td>
+                        <td><img th:src="${p.imageUrl}" alt="product"></td>
+                        <td th:text="${p.name}"></td>
+                        <td th:text="'৳ ' + ${p.price}"></td>
+                        <td>
+                            <span class="admin-badge admin-badge-user" th:text="${p.category}"></span>
+                        </td>
+                        <td>
+                            <a th:href="@{/admin/products/{id}/edit(id=${p.id})}" class="admin-btn admin-btn-warning">Edit</a>
+
+                            <form th:action="@{/admin/products/{id}/delete(id=${p.id})}" method="post" style="display:inline">
+                                <button type="submit" class="admin-btn admin-btn-danger"
+                                        onclick="return confirm('Delete this product?')">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+
+    <div th:replace="fragments/footer :: siteFooter"></div>
+</div>
 
 </body>
 </html>

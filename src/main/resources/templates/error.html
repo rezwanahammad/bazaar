@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,12 +7,15 @@
     <style>
         body {
             font-family: Arial, sans-serif;
+            margin: 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .error-wrapper {
+            min-height: 70vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
-            margin: 0;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 24px;
         }
         .error-container {
             text-align: center;
@@ -46,10 +49,13 @@
     </style>
 </head>
 <body>
-    <div class="error-container">
-        <h1>⚠️ Oops!</h1>
-        <p>Sorry, an error occurred</p>
-        <a href="/">Go Home</a>
+    <div class="error-wrapper">
+        <div class="error-container">
+            <h1>⚠️ Oops!</h1>
+            <p>Sorry, an error occurred</p>
+            <a href="/">Go Home</a>
+        </div>
     </div>
+    <div th:replace="fragments/footer :: siteFooter"></div>
 </body>
 </html>

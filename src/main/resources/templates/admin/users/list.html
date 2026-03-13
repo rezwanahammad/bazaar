@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Users | Bazaar Admin</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<div th:replace="fragments/admin-sidebar :: sidebar('users')"></div>
+
+<div class="admin-content">
+
+    <div class="admin-topbar">
+        <h1>Users</h1>
+        <span class="admin-topbar-meta">Manage registered users and roles</span>
+    </div>
+
+    <div class="admin-body">
+
+        <div class="admin-table-wrap">
+            <div class="admin-table-header">
+                <h2>All Users</h2>
+                <span class="admin-topbar-meta" th:text="${#lists.size(users)} + ' users total'"></span>
+            </div>
+
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Username</th>
+                        <th>Email</th>
+                        <th>Role</th>
+                        <th>Registered</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="u : ${users}">
+                        <td th:text="${u.id}"></td>
+                        <td th:text="${u.username}"></td>
+                        <td th:text="${u.email}"></td>
+                        <td>
+                            <span class="admin-badge"
+                                  th:classappend="${u.role == 'ROLE_ADMIN'} ? ' admin-badge-admin' : ' admin-badge-user'"
+                                  th:text="${u.role == 'ROLE_ADMIN'} ? 'Admin' : 'User'">
+                            </span>
+                        </td>
+                        <td th:text="${#temporals.format(u.createdAt, 'dd MMM yyyy')}"></td>
+                        <td>
+                            <!-- Promote to admin -->
+                            <form th:if="${u.role != 'ROLE_ADMIN'}"
+                                  th:action="@{/admin/users/{id}/make-admin(id=${u.id})}"
+                                  method="post" style="display:inline">
+                                <button type="submit" class="admin-btn admin-btn-info"
+                                        onclick="return confirm('Make this user an admin?')">
+                                    Make Admin
+                                </button>
+                            </form>
+
+                            <!-- Remove admin -->
+                            <form th:if="${u.role == 'ROLE_ADMIN'}"
+                                  th:action="@{/admin/users/{id}/remove-admin(id=${u.id})}"
+                                  method="post" style="display:inline">
+                                <button type="submit" class="admin-btn admin-btn-danger"
+                                        onclick="return confirm('Remove admin role from this user?')">
+                                    Remove Admin
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+
+    <div th:replace="fragments/footer :: siteFooter"></div>
+</div>
+
+</body>
+</html>

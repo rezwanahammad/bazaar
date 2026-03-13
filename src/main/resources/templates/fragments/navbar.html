@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
 <body>
 
@@ -29,17 +30,23 @@
     <!-- RIGHT : ICONS -->
     <div class="nav-right">
 
-        <a th:href="@{/login}" class="icon">
-            👤
-        </a>
+        <!-- When NOT logged in -->
+        <div sec:authorize="isAnonymous()" style="display:contents">
+            <a th:href="@{/login}" class="icon" title="Login">👤</a>
+            <a th:href="@{/register}" class="icon" title="Register">📝</a>
+        </div>
 
-        <a th:href="@{/register}" class="icon">
-            📝
-        </a>
-
-        <a th:href="@{/cart}" class="icon">
-            🛒
-        </a>
+        <!-- When logged in -->
+        <div sec:authorize="isAuthenticated()" style="display:contents">
+            <a th:href="@{/profile}" class="icon nav-username" title="My Profile">
+                👤 <span sec:authentication="name"></span>
+            </a>
+            <a th:href="@{/cart}" class="icon" title="Cart">🛒</a>
+            <a sec:authorize="hasRole('ADMIN')" th:href="@{/admin}" class="icon" title="Admin Panel">⚙️</a>
+            <form th:action="@{/logout}" method="post" style="display:inline">
+                <button type="submit" class="icon nav-logout-btn" title="Logout">🚪</button>
+            </form>
+        </div>
 
     </div>
 

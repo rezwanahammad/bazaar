@@ -2,14 +2,56 @@
 <html xmlns:th="http://www.thymeleaf.org">
 
 <head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bazaar | Home</title>
 <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 
-<body>
+<body class="home-page">
 
 <div th:replace="fragments/navbar :: navbar"></div>
 
-<h1>Welcome to Bazaar</h1>
+<main class="home-main">
+	<section class="home-hero" aria-label="Streetwear hero section">
+		<img th:src="@{/images/homepage.png}" src="/images/homepage.png" alt="Streetwear collection banner" class="home-hero-image">
+
+		<div class="home-hero-overlay"></div>
+
+		<div class="home-hero-content">
+			<p class="home-subtitle">Bazaar: Where fashion meets identity. We don't just sell clothes; we shape your style journey.</p>
+
+			<div class="home-cta-row">
+				<a th:href="@{/products(category='oversized-shirt')}" class="home-btn home-btn-primary">Shop Now</a>
+				<a th:href="@{/products(category='limited-offer')}" class="home-btn home-btn-secondary">Limited Drops</a>
+			</div>
+		</div>
+	</section>
+
+	<section class="home-products" aria-label="Featured products">
+		<div class="home-products-head">
+			<h2>All Products</h2>
+			<a th:href="@{/products}" class="home-products-link">Browse All</a>
+		</div>
+
+		<div class="home-product-grid">
+			<a th:each="p : ${products}" th:href="@{/products/{id}(id=${p.id})}" class="home-product-card">
+				<img th:src="${p.imageUrl}" th:alt="${p.name}">
+				<div class="home-product-info">
+					<h3 th:text="${p.name}">Product Name</h3>
+					<p th:text="'৳ ' + ${p.price}">৳ 0</p>
+					<div class="home-product-actions">
+						<span class="home-card-btn">Add To Cart 🛒</span>
+						<span class="home-card-btn">⚡ Buy Now</span>
+					</div>
+				</div>
+			</a>
+		</div>
+
+	</section>
+</main>
+
+<div th:replace="fragments/footer :: siteFooter"></div>
 
 </body>
 </html>

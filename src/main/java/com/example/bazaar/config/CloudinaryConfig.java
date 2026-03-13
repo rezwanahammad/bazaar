@@ -1,0 +1,28 @@
+package com.example.bazaar.config;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+import com.cloudinary.Cloudinary;
+
+@Configuration
+public class CloudinaryConfig {
+
+    @Bean
+    public Cloudinary cloudinary(
+            @Value("${cloudinary.cloud-name:}") String cloudName,
+            @Value("${cloudinary.api-key:}") String apiKey,
+            @Value("${cloudinary.api-secret:}") String apiSecret
+    ) {
+        Map<String, String> config = new HashMap<>();
+        config.put("cloud_name", cloudName == null ? "" : cloudName.trim());
+        config.put("api_key", apiKey == null ? "" : apiKey.trim());
+        config.put("api_secret", apiSecret == null ? "" : apiSecret.trim());
+        config.put("secure", "true");
+        return new Cloudinary(config);
+    }
+}

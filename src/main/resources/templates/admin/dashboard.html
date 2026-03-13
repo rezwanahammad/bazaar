@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard | Bazaar Admin</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<div th:replace="fragments/admin-sidebar :: sidebar('dashboard')"></div>
+
+<div class="admin-content">
+
+    <div class="admin-topbar">
+        <h1>Dashboard</h1>
+        <span class="admin-topbar-meta">Welcome to Bazaar Admin Panel</span>
+    </div>
+
+    <div class="admin-body">
+
+        <!-- Stats -->
+        <div class="admin-stats">
+            <div class="admin-stat-card">
+                <div class="stat-label">Total Products</div>
+                <div class="stat-value" th:text="${productCount}">0</div>
+            </div>
+            <div class="admin-stat-card">
+                <div class="stat-label">Total Users</div>
+                <div class="stat-value" th:text="${userCount}">0</div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="admin-section-title">Quick Actions</div>
+        <div class="admin-actions">
+            <a th:href="@{/admin/products/create}" class="admin-btn admin-btn-primary">+ Add Product</a>
+            <a th:href="@{/admin/products}" class="admin-btn admin-btn-info">View All Products</a>
+            <a th:href="@{/admin/users}" class="admin-btn admin-btn-success">Manage Users</a>
+        </div>
+
+    </div>
+
+    <div th:replace="fragments/footer :: siteFooter"></div>
+</div>
+
+</body>
+</html>
