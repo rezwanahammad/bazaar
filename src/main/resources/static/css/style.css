@@ -1,0 +1,47 @@
+body{
+    margin:0;
+    font-family:Arial, Helvetica, sans-serif;
+}
+
+.navbar{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:15px 40px;
+    border-bottom:1px solid #ddd;
+}
+
+/* LEFT */
+.logo{
+    font-size:24px;
+    font-weight:bold;
+    text-decoration:none;
+    color:black;
+}
+
+/* CENTER */
+.nav-center{
+    display:flex;
+    gap:20px;
+}
+
+.nav-center a{
+    text-decoration:none;
+    color:black;
+    font-size:14px;
+}
+
+.nav-center a:hover{
+    color:#666;
+}
+
+/* RIGHT */
+.nav-right{
+    display:flex;
+    gap:20px;
+}
+
+.icon{
+    text-decoration:none;
+    font-size:18px;
+}

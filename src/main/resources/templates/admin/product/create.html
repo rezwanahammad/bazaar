@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+<link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+
+<body>
+
+<div th:replace="fragments/navbar :: navbar"></div>
+
+<h2>Add Product</h2>
+
+<form th:action="@{/admin/products}" method="post" th:object="${product}">
+
+Name
+<input type="text" th:field="*{name}"/>
+
+Description
+<textarea th:field="*{description}"></textarea>
+
+Price
+<input type="number" step="0.01" th:field="*{price}"/>
+
+Stock
+<input type="number" th:field="*{stockQuantity}"/>
+
+Brand
+<input type="text" th:field="*{brand}"/>
+
+Image URL
+<input type="text" th:field="*{imageUrl}"/>
+
+Category
+<select th:field="*{category}">
+    <option th:each="c : ${categories}"
+            th:value="${c}"
+            th:text="${c}">
+    </option>
+</select>
+
+<button type="submit">Create Product</button>
+
+</form>
+
+</body>
+</html>
