@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile | Bazaar</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<div th:replace="fragments/navbar :: navbar"></div>
+
+<div class="profile-wrapper">
+
+    <div class="profile-card">
+
+        <div class="profile-avatar">
+            <span th:text="${#strings.toUpperCase(#strings.substring(currentUser.username, 0, 1))}">U</span>
+        </div>
+
+        <div class="profile-name" th:text="${currentUser.username}">Username</div>
+
+        <span class="profile-role-badge"
+              th:classappend="${currentUser.role == 'ROLE_ADMIN'} ? ' profile-role-admin' : ' profile-role-user'"
+              th:text="${currentUser.role == 'ROLE_ADMIN'} ? 'Admin' : 'User'">
+        </span>
+
+        <div class="profile-info-grid">
+
+            <div class="profile-info-row">
+                <span class="profile-info-label">Username</span>
+                <span class="profile-info-value" th:text="${currentUser.username}"></span>
+            </div>
+
+            <div class="profile-info-row">
+                <span class="profile-info-label">Email</span>
+                <span class="profile-info-value" th:text="${currentUser.email}"></span>
+            </div>
+
+            <div class="profile-info-row">
+                <span class="profile-info-label">Role</span>
+                <span class="profile-info-value" th:text="${currentUser.role == 'ROLE_ADMIN'} ? 'Administrator' : 'Customer'"></span>
+            </div>
+
+            <div class="profile-info-row">
+                <span class="profile-info-label">Member Since</span>
+                <span class="profile-info-value" th:text="${#temporals.format(currentUser.createdAt, 'dd MMM yyyy')}"></span>
+            </div>
+
+            <div class="profile-info-row">
+                <span class="profile-info-label">Account Status</span>
+                <span class="profile-info-value"
+                      th:text="${currentUser.enabled} ? 'Active' : 'Disabled'"></span>
+            </div>
+
+        </div>
+
+        <div class="profile-actions">
+            <a th:if="${currentUser.role == 'ROLE_ADMIN'}" th:href="@{/admin}" class="profile-btn profile-btn-admin">
+                <i class="fa-solid fa-gear"></i> Go to Admin Panel
+            </a>
+            <form th:action="@{/logout}" method="post">
+                <button type="submit" class="profile-btn profile-btn-logout"><i class="fa-solid fa-right-from-bracket"></i> Logout</button>
+            </form>
+        </div>
+
+    </div>
+
+</div>
+
+<div th:replace="fragments/footer :: siteFooter"></div>
+
+</body>
+</html>

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cart | Bazaar</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<div th:replace="fragments/navbar :: navbar"></div>
+
+<main class="cart-page">
+    <section class="cart-shell">
+        <header class="cart-head">
+            <h1>Your Cart</h1>
+            <p th:text="${cartQuantity} + ' item(s) selected'">0 item(s) selected</p>
+        </header>
+
+        <div class="review-feedback review-feedback-success" th:if="${cartSuccess}" th:text="${cartSuccess}">Product added to cart</div>
+
+        <section class="cart-empty" th:if="${#lists.isEmpty(cartItems)}">
+            <p>Your cart is empty.</p>
+            <a th:href="@{/products}" class="product-cta product-cta-primary">Continue Shopping</a>
+        </section>
+
+        <div class="cart-layout" th:if="${!#lists.isEmpty(cartItems)}">
+            <section class="cart-list">
+                <article class="cart-item" th:each="item : ${cartItems}">
+                    <img th:src="${item.imageUrl}" th:alt="${item.productName}">
+
+                    <div class="cart-item-info">
+                        <h3 th:text="${item.productName}">Product</h3>
+                        <p th:text="'Size: ' + ${item.size}">Size: M-42/27</p>
+                        <p th:text="'Quantity: ' + ${item.quantity}">Quantity: 1</p>
+                        <p th:text="'Unit Price: ৳' + ${item.unitPrice}">Unit Price: ৳0</p>
+                    </div>
+
+                    <div class="cart-item-side">
+                        <strong th:text="'৳' + ${item.lineTotal}">৳0</strong>
+                        <form th:action="@{/cart/remove}" method="post">
+                            <input type="hidden" name="productId" th:value="${item.productId}">
+                            <input type="hidden" name="size" th:value="${item.size}">
+                            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                            <button type="submit" class="cart-remove-btn">Remove</button>
+                        </form>
+                    </div>
+                </article>
+            </section>
+
+            <aside class="cart-summary">
+                <h2>Order Summary</h2>
+                <div class="cart-summary-row">
+                    <span>Subtotal</span>
+                    <strong th:text="'৳' + ${cartSubtotal}">৳0</strong>
+                </div>
+                <div class="cart-summary-row">
+                    <span>Total</span>
+                    <strong th:text="'৳' + ${cartTotal}">৳0</strong>
+                </div>
+                <a th:href="@{/products}" class="product-cta product-cta-secondary">Add More Products</a>
+            </aside>
+        </div>
+    </section>
+</main>
+
+<div th:replace="fragments/footer :: siteFooter"></div>
+
+</body>
+</html>

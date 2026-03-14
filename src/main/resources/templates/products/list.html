@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Products | Bazaar</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<div th:replace="fragments/navbar :: navbar"></div>
+
+<main class="products-page">
+    <section class="products-header">
+        <h1 th:text="${selectedCategory}">All Products</h1>
+        <p>Explore our latest drops from the database.</p>
+    </section>
+
+    <section class="products-grid-wrap">
+        <a th:each="p : ${products}" th:href="@{/products/{id}(id=${p.id})}" class="home-product-card">
+            <img th:src="${p.imageUrl}" th:alt="${p.name}">
+            <div class="home-product-info">
+                <h3 th:text="${p.name}">Product Name</h3>
+                <p th:text="'৳ ' + ${p.price}">৳ 0</p>
+                <div class="home-product-actions">
+                    <span class="home-card-btn"><i class="fa-solid fa-cart-plus"></i> Add To Cart</span>
+                    <span class="home-card-btn"><i class="fa-solid fa-bolt"></i> Buy Now</span>
+                </div>
+            </div>
+        </a>
+    </section>
+
+</main>
+
+<div th:replace="fragments/footer :: siteFooter"></div>
+
+</body>
+</html>

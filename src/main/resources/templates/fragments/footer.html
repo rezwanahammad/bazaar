@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<div th:fragment="siteFooter" class="site-footer-wrap">
+    <footer class="site-footer">
+        <div class="site-footer-grid">
+            <section>
+                <h3 class="site-footer-brand">Bazaar</h3>
+                <h4>AN ONLINE SHOPPING MALL</h4>
+                <p>All kinds of online items are sold wholesale and retail here</p>
+            </section>
+
+            <section>
+                <h4>Information</h4>
+                <a href="#">Return Policy</a>
+                <a href="#">Terms & Conditions</a>
+                <a href="#">Privacy Policy</a>
+                <a href="#">About Us</a>
+            </section>
+
+            <section>
+                <h4>Categories</h4>
+                <a th:href="@{/products(category='oversized-shirt')}">Oversized Shirt</a>
+                <a th:href="@{/products(category='polo-shirt')}">Polo Shirt</a>
+                <a th:href="@{/products(category='slim-fit-shirt')}">Slim Fit Shirt</a>
+                <a th:href="@{/products(category='baggy-pant')}">Baggy Pant</a>
+                <a th:href="@{/products(category='oversized-tshirt')}">Oversized T-Shirt</a>
+            </section>
+
+            <section>
+                <h4>Contact Us</h4>
+                <p><strong>Call:</strong> 01910702666</p>
+                <p><strong>Open:</strong> 10:00am - 8:00pm</p>
+                <p><strong>Address:</strong> Dhaka Uddan, Mohammadpur, Dhaka-1207</p>
+            </section>
+        </div>
+    </footer>
+    <div class="site-footer-copy">Copyright &copy; 2026 Bazaar</div>
+</div>
+
+</body>
+</html>

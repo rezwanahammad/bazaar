@@ -1,11 +1,14 @@
 package com.example.bazaar.service;
 
-import com.example.bazaar.model.Product;
-import com.example.bazaar.repository.ProductRepository;
-import lombok.RequiredArgsConstructor;
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import com.example.bazaar.enums.Category;
+import com.example.bazaar.model.Product;
+import com.example.bazaar.repository.ProductRepository;
+
+import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
@@ -21,9 +24,28 @@ public class ProductService {
         return productRepository.findAll();
     }
 
+    public List<Product> getActiveProducts() {
+        return productRepository.findByActiveTrueOrderByCreatedAtDesc();
+    }
+
+    public List<Product> getActiveProductsByCategory(Category category) {
+        return productRepository.findByCategoryAndActiveTrueOrderByCreatedAtDesc(category);
+    }
+
     public Product getProductById(Long id){
         return productRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Product not found"));
+    }
+
+    public List<Product> getRelatedProducts(Product product) {
+        List<Product> relatedProducts = productRepository
+                .findTop4ByCategoryAndActiveTrueAndIdNotOrderByCreatedAtDesc(product.getCategory(), product.getId());
+
+        if (!relatedProducts.isEmpty()) {
+            return relatedProducts;
+        }
+
+        return productRepository.findTop4ByActiveTrueAndIdNotOrderByCreatedAtDesc(product.getId());
     }
 
     public void deleteProduct(Long id){

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<div th:fragment="sidebar(active)">
+    <aside class="admin-sidebar">
+
+        <a th:href="@{/admin}" class="admin-sidebar-brand">
+            Bazaar <span>Admin</span>
+        </a>
+
+        <nav class="admin-nav">
+            <a th:href="@{/admin}"
+               th:classappend="${active == 'dashboard'} ? ' active' : ''">
+                &#128202; Dashboard
+            </a>
+            <a th:href="@{/admin/products}"
+               th:classappend="${active == 'products'} ? ' active' : ''">
+                &#128230; Products
+            </a>
+            <a th:href="@{/admin/users}"
+               th:classappend="${active == 'users'} ? ' active' : ''">
+                &#128101; Users
+            </a>
+        </nav>
+
+        <div class="admin-sidebar-footer">
+            <a th:href="@{/}">&#8592; Back to Store</a>
+        </div>
+
+    </aside>
+</div>
+
+</body>
+</html>
