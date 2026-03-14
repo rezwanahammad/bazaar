@@ -58,10 +58,10 @@
 
         <div class="profile-actions">
             <a th:if="${currentUser.role == 'ROLE_ADMIN'}" th:href="@{/admin}" class="profile-btn profile-btn-admin">
-                ⚙️ Go to Admin Panel
+                <i class="fa-solid fa-gear"></i> Go to Admin Panel
             </a>
             <form th:action="@{/logout}" method="post">
-                <button type="submit" class="profile-btn profile-btn-logout">🚪 Logout</button>
+                <button type="submit" class="profile-btn profile-btn-logout"><i class="fa-solid fa-right-from-bracket"></i> Logout</button>
             </form>
         </div>
 

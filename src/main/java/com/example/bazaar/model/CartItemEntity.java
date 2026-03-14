@@ -1,6 +1,6 @@
 package com.example.bazaar.model;
 
-import java.time.LocalDateTime;
+import java.math.BigDecimal;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -14,33 +14,30 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
+@Table(name = "cart_items")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "users")
-public class User {
+public class CartItemEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(unique = true, nullable = false)
     private String username;
-
-    @Column(unique = true, nullable = false)
-    private String email;
-
-    private String fullName;
-    private String phone;
+    private Long productId;
+    private String productName;
 
     @Column(length = 1000)
-    private String address;
+    private String imageUrl;
 
-    @Column(length = 1000)
-    private String billingAddress;
+    private BigDecimal unitPrice;
+    private String size;
+    private int quantity;
 
-    private String password;
-    private String role;
-    private boolean enabled = true;
-    private LocalDateTime createdAt = LocalDateTime.now();
+    public BigDecimal getLineTotal() {
+        if (unitPrice == null) return BigDecimal.ZERO;
+        return unitPrice.multiply(BigDecimal.valueOf(quantity));
+    }
 }

@@ -34,6 +34,26 @@ public class UserService {
     }
 
     public User registerUser(User user){
+        if (user.getEmail() != null) {
+            user.setEmail(user.getEmail().trim().toLowerCase());
+        }
+        if (user.getFullName() != null) {
+            user.setFullName(user.getFullName().trim());
+        }
+        if (user.getPhone() != null) {
+            user.setPhone(user.getPhone().trim());
+        }
+        if (user.getAddress() != null) {
+            user.setAddress(user.getAddress().trim());
+        }
+        if (user.getBillingAddress() != null) {
+            user.setBillingAddress(user.getBillingAddress().trim());
+        }
+
+        // Registration no longer asks for username explicitly; use email as the login username.
+        if (user.getUsername() == null || user.getUsername().isBlank()) {
+            user.setUsername(user.getEmail());
+        }
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setRole("ROLE_USER");
         return userRepository.save(user);

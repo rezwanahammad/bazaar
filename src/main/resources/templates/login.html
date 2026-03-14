@@ -2,28 +2,44 @@
 <html xmlns:th="http://www.thymeleaf.org">
 
 <head>
-<link rel="stylesheet" th:href="@{/css/style.css}">
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Login | Bazaar</title>
+	<link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 
 <body>
 
 <div th:replace="fragments/navbar :: navbar"></div>
 
-<h2>Login</h2>
+<main class="auth-page auth-login-page">
+	<section class="auth-shell">
+		<div class="auth-intro auth-intro-login">
+			<p class="auth-kicker">Welcome Back</p>
+			<h1>Sign In to Bazaar</h1>
+			<p>Access your cart, place orders, and track your latest activity in one place.</p>
+		</div>
 
-<form th:action="@{/login}" method="post">
+		<div class="auth-card">
+			<h2>Login</h2>
+			<p>Use your username (registered email) and password to continue.</p>
 
-Username
-<input type="text" name="username"/>
+			<form th:action="@{/login}" method="post" class="auth-form">
+				<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
 
-Password
-<input type="password" name="password"/>
+				<label for="username">Username (Email)</label>
+				<input id="username" type="text" name="username" autocomplete="username" required>
 
-<button type="submit">Login</button>
+				<label for="password">Password</label>
+				<input id="password" type="password" name="password" autocomplete="current-password" required>
 
-</form>
+				<button type="submit" class="auth-submit-btn">Login</button>
+			</form>
 
-<a href="/register">Register</a>
+			<p class="auth-switch-line">No account yet? <a th:href="@{/register}">Create one</a></p>
+		</div>
+	</section>
+</main>
 
 <div th:replace="fragments/footer :: siteFooter"></div>
 

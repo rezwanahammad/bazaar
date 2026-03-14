@@ -1,6 +1,7 @@
 package com.example.bazaar.controller;
 
 import java.math.BigDecimal;
+import java.security.Principal;
 import java.util.List;
 
 import org.springframework.stereotype.Controller;
@@ -67,15 +68,16 @@ public class ProductController {
     @PostMapping("/products/{id}/reviews")
     public String submitReview(
             @PathVariable Long id,
-            @RequestParam("reviewerName") String reviewerName,
             @RequestParam("rating") Integer rating,
             @RequestParam("reviewText") String reviewText,
+            Principal principal,
             RedirectAttributes redirectAttributes
     ) {
-        if (reviewerName == null || reviewerName.isBlank() || reviewText == null || reviewText.isBlank()) {
-            redirectAttributes.addFlashAttribute("reviewError", "Please fill in your name and review before submitting.");
+        if (reviewText == null || reviewText.isBlank()) {
+            redirectAttributes.addFlashAttribute("reviewError", "Please write your review before submitting.");
             return "redirect:/products/" + id;
         }
+        String reviewerName = (principal != null) ? principal.getName() : "Anonymous";
 
         if (rating < 1 || rating > 5) {
             redirectAttributes.addFlashAttribute("reviewError", "Rating must be between 1 and 5 stars.");
