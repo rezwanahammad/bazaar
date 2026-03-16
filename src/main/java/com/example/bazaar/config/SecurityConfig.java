@@ -18,6 +18,8 @@ public class SecurityConfig {
                 .requestMatchers("/register", "/login", "/css/**", "/js/**", "/images/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/", "/products", "/products/**").permitAll()
                 .requestMatchers("/admin", "/admin/**").hasRole("ADMIN")
+                .requestMatchers("/seller", "/seller/**").hasAnyRole("SELLER", "ADMIN")
+                .requestMatchers("/cart/**", "/checkout/**", "/orders/**").hasAnyRole("BUYER", "ADMIN")
                 .anyRequest().authenticated()
             )
             .formLogin(login -> login

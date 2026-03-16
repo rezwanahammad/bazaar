@@ -41,4 +41,6 @@ public class Product {
 
     private LocalDateTime updatedAt;
 
+    private String sellerUsername;
+
 }

@@ -1,6 +1,7 @@
 package com.example.bazaar.repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -16,4 +17,8 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 	List<Product> findTop4ByCategoryAndActiveTrueAndIdNotOrderByCreatedAtDesc(Category category, Long id);
 
 	List<Product> findTop4ByActiveTrueAndIdNotOrderByCreatedAtDesc(Long id);
+
+	List<Product> findBySellerUsernameOrderByCreatedAtDesc(String sellerUsername);
+
+	Optional<Product> findByIdAndSellerUsername(Long id, String sellerUsername);
 }

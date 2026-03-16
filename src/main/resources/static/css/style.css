@@ -129,6 +129,11 @@ body{
     color:#3a5bd9;
 }
 
+.profile-role-seller{
+    background:#fff7ed;
+    color:#c2410c;
+}
+
 .profile-role-user{
     background:#f0f2f8;
     color:#64748b;
@@ -199,6 +204,11 @@ body{
 .profile-btn-admin{
     background:#6c8ef5;
     color:#fff;
+}
+
+.profile-btn-seller{
+    background:#fff7ed;
+    color:#c2410c;
 }
 
 .profile-btn-logout{
@@ -414,6 +424,10 @@ body{
     color:#6c8ef5;
 }
 
+.seller-brand-accent{
+    color:#f97316;
+}
+
 .admin-nav{
     flex:1;
     padding:14px 0;
@@ -624,6 +638,11 @@ body{
 .admin-badge-admin{
     background:#e8eeff;
     color:#3a5bd9;
+}
+
+.admin-badge-seller{
+    background:#fff7ed;
+    color:#c2410c;
 }
 
 .admin-badge-user{
@@ -1420,7 +1439,8 @@ body{
 }
 
 .auth-form input,
-.auth-form textarea{
+.auth-form textarea,
+.auth-form select{
     width:100%;
     border:1px solid #cbd5e1;
     border-radius:10px;
@@ -1433,7 +1453,8 @@ body{
 }
 
 .auth-form input:focus,
-.auth-form textarea:focus{
+.auth-form textarea:focus,
+.auth-form select:focus{
     border-color:#3b82f6;
     box-shadow:0 0 0 3px rgba(59, 130, 246, 0.16);
     outline:none;
@@ -1624,6 +1645,284 @@ body{
 }
 
 /* =============================================
+   CHECKOUT + ORDERS
+   ============================================= */
+
+.checkout-page,
+.orders-page,
+.order-success-page{
+    background:#f3f5f7;
+    min-height:70vh;
+    padding:18px min(4vw, 40px) 44px;
+}
+
+.checkout-shell,
+.orders-shell{
+    max-width:1080px;
+    margin:0 auto;
+}
+
+.checkout-head h1,
+.orders-head h1{
+    margin:0;
+    font-size:26px;
+    color:#0f1729;
+}
+
+.checkout-head p,
+.orders-head p{
+    margin:4px 0 12px;
+    color:#64748b;
+    font-size:13px;
+}
+
+.checkout-layout{
+    display:grid;
+    grid-template-columns:minmax(0, 1fr) 320px;
+    gap:14px;
+    align-items:start;
+}
+
+.checkout-card,
+.checkout-summary,
+.orders-item,
+.order-success-card{
+    background:#fff;
+    border:1px solid #dbe4ef;
+    border-radius:12px;
+}
+
+.checkout-card,
+.checkout-summary{
+    padding:14px;
+}
+
+.checkout-card h2,
+.checkout-summary h2{
+    margin:0 0 10px;
+    font-size:16px;
+    color:#0f1729;
+}
+
+.checkout-form{
+    display:grid;
+    gap:12px;
+}
+
+.checkout-method-list{
+    display:grid;
+    gap:8px;
+}
+
+.checkout-method-item{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    padding:8px;
+    border:1px solid #dbe4ef;
+    border-radius:8px;
+    font-size:14px;
+    color:#1e293b;
+}
+
+.checkout-manual-box{
+    border:1px solid #dbe4ef;
+    border-radius:10px;
+    padding:10px;
+    background:#f8fafc;
+}
+
+.checkout-manual-box h3{
+    margin:0 0 6px;
+    font-size:14px;
+    color:#0f1729;
+}
+
+.checkout-manual-box p{
+    margin:0 0 4px;
+    font-size:12px;
+    color:#475569;
+}
+
+.checkout-manual-box label{
+    display:block;
+    margin:8px 0 4px;
+    font-size:12px;
+    font-weight:700;
+    color:#334155;
+}
+
+.checkout-manual-box input{
+    width:100%;
+    padding:8px 10px;
+    border:1px solid #cbd5e1;
+    border-radius:8px;
+    font-size:13px;
+    font-family:inherit;
+}
+
+.checkout-submit{
+    width:100%;
+}
+
+.checkout-summary-item{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+    gap:8px;
+    padding:8px 0;
+    border-bottom:1px solid #edf2f7;
+}
+
+.checkout-summary-item:last-of-type{
+    border-bottom:none;
+}
+
+.checkout-summary-item strong{
+    font-size:13px;
+    color:#1f2937;
+}
+
+.checkout-summary-item p{
+    margin:3px 0 0;
+    font-size:12px;
+    color:#64748b;
+}
+
+.checkout-summary-item span{
+    font-size:13px;
+    font-weight:700;
+    color:#1f2937;
+}
+
+.checkout-total-row{
+    margin-top:10px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    font-size:14px;
+    color:#0f1729;
+}
+
+.orders-empty{
+    background:#fff;
+    border:1px solid #dbe4ef;
+    border-radius:12px;
+    padding:16px;
+}
+
+.orders-empty p{
+    margin:0 0 10px;
+    color:#475569;
+}
+
+.orders-list{
+    display:grid;
+    gap:10px;
+}
+
+.orders-item{
+    padding:14px;
+}
+
+.orders-item header{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:8px;
+    margin-bottom:10px;
+}
+
+.orders-item h2{
+    margin:0;
+    font-size:16px;
+    color:#0f1729;
+}
+
+.orders-item header span{
+    font-size:12px;
+    color:#64748b;
+}
+
+.orders-meta{
+    display:grid;
+    grid-template-columns:repeat(2, minmax(0, 1fr));
+    gap:6px 10px;
+}
+
+.orders-meta p{
+    margin:0;
+    font-size:13px;
+    color:#334155;
+}
+
+.order-success-card{
+    max-width:580px;
+    margin:0 auto;
+    padding:20px;
+}
+
+.order-success-kicker{
+    margin:0;
+    font-size:12px;
+    font-weight:700;
+    text-transform:uppercase;
+    letter-spacing:0.1em;
+    color:#6c8ef5;
+}
+
+.order-success-card h1{
+    margin:6px 0 6px;
+    font-size:28px;
+    color:#0f1729;
+}
+
+.order-success-card > p{
+    margin:0 0 14px;
+    font-size:14px;
+    color:#475569;
+}
+
+.order-success-grid{
+    display:grid;
+    grid-template-columns:repeat(2, minmax(0, 1fr));
+    gap:10px;
+    margin-bottom:16px;
+}
+
+.order-success-grid div{
+    border:1px solid #e2e8f0;
+    border-radius:8px;
+    padding:10px;
+    background:#fafcff;
+}
+
+.order-success-grid span{
+    display:block;
+    font-size:12px;
+    color:#64748b;
+}
+
+.order-success-grid strong{
+    font-size:14px;
+    color:#0f1729;
+}
+
+.order-success-actions{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:8px;
+}
+
+.admin-reject-reason{
+    border:1px solid #d1d9e8;
+    border-radius:7px;
+    font-size:12px;
+    padding:6px 8px;
+    margin-right:6px;
+}
+
+/* =============================================
    GLOBAL FOOTER
    ============================================= */
 
@@ -1786,6 +2085,16 @@ body{
     }
 
     .cart-layout{
+        grid-template-columns:1fr;
+    }
+
+    .checkout-layout{
+        grid-template-columns:1fr;
+    }
+
+    .orders-meta,
+    .order-success-grid,
+    .order-success-actions{
         grid-template-columns:1fr;
     }
 

@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout | Bazaar</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<div th:replace="fragments/navbar :: navbar"></div>
+
+<main class="checkout-page">
+    <section class="checkout-shell">
+        <header class="checkout-head">
+            <h1>Checkout</h1>
+            <p>Choose a payment method and confirm your order.</p>
+        </header>
+
+        <div class="review-feedback review-feedback-error" th:if="${checkoutError}" th:text="${checkoutError}">Please provide valid payment details.</div>
+
+        <div class="checkout-layout">
+            <section class="checkout-card">
+                <h2>Select Payment Method</h2>
+                <form th:action="@{/checkout/place}" method="post" id="checkoutForm" class="checkout-form">
+                    <div class="checkout-method-list">
+                        <label class="checkout-method-item" th:each="method : ${paymentMethods}">
+                            <input type="radio" name="paymentMethod" th:value="${method.name()}" th:checked="${method.name() == 'BKASH'}">
+                            <span th:text="${method.displayName}">bKash</span>
+                        </label>
+                    </div>
+
+                    <div class="checkout-manual-box" id="manualPaymentBox">
+                        <h3>Manual Payment Instructions</h3>
+                        <p>Send money to: <strong th:text="${manualPaymentNumber}">01XXXXXXXXX</strong></p>
+                        <p>Reference: Your order ID will be generated after submit.</p>
+
+                        <label for="transactionId">Transaction ID</label>
+                        <input id="transactionId" name="transactionId" type="text" placeholder="Example: A9X4T2R1" autocomplete="off">
+
+                        <label for="phone">Phone Number</label>
+                        <input id="phone" name="phone" type="text" placeholder="01XXXXXXXXX" autocomplete="tel">
+                    </div>
+
+                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                    <button type="submit" class="product-cta product-cta-primary checkout-submit">Confirm Order</button>
+                </form>
+            </section>
+
+            <aside class="checkout-summary">
+                <h2>Order Summary</h2>
+                <div class="checkout-summary-item" th:each="item : ${cartItems}">
+                    <div>
+                        <strong th:text="${item.productName}">Product</strong>
+                        <p th:text="'Qty: ' + ${item.quantity} + ' | Size: ' + ${item.size}">Qty: 1 | Size: M-42/27</p>
+                    </div>
+                    <span th:text="'৳' + ${item.lineTotal}">৳0</span>
+                </div>
+
+                <div class="checkout-total-row">
+                    <span>Total</span>
+                    <strong th:text="'৳' + ${cartTotal}">৳0</strong>
+                </div>
+            </aside>
+        </div>
+    </section>
+</main>
+
+<div th:replace="fragments/footer :: siteFooter"></div>
+
+<script>
+    (function () {
+        const form = document.getElementById('checkoutForm');
+        if (!form) return;
+
+        const txInput = document.getElementById('transactionId');
+        const phoneInput = document.getElementById('phone');
+        const manualBox = document.getElementById('manualPaymentBox');
+        const radios = form.querySelectorAll('input[name="paymentMethod"]');
+
+        function syncManualFields() {
+            const selected = form.querySelector('input[name="paymentMethod"]:checked');
+            const isManual = selected && (selected.value === 'BKASH' || selected.value === 'NAGAD');
+
+            manualBox.style.display = isManual ? 'block' : 'none';
+            txInput.required = !!isManual;
+            phoneInput.required = !!isManual;
+
+            if (!isManual) {
+                txInput.value = '';
+                phoneInput.value = '';
+            }
+        }
+
+        radios.forEach(function (radio) {
+            radio.addEventListener('change', syncManualFields);
+        });
+
+        syncManualFields();
+    })();
+</script>
+
+</body>
+</html>

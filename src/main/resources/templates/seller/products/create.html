@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Product | Bazaar Seller</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<div th:replace="fragments/seller-sidebar :: sellerSidebar('create')"></div>
+
+<div class="admin-content">
+
+    <div class="admin-topbar">
+        <h1>Add New Product</h1>
+        <span class="admin-topbar-meta">List a new product on the store</span>
+    </div>
+
+    <div class="admin-body">
+
+        <a th:href="@{/seller/products}" class="admin-back-link">&#8592; Back to My Products</a>
+
+        <div class="admin-form-wrap">
+            <form th:action="@{/seller/products}" method="post" th:object="${product}" enctype="multipart/form-data">
+
+                <div class="admin-form-group">
+                    <label for="name">Product Name</label>
+                    <input type="text" id="name" th:field="*{name}" placeholder="e.g. Oversized Black Tee" required/>
+                </div>
+
+                <div class="admin-form-group">
+                    <label for="description">Description</label>
+                    <textarea id="description" th:field="*{description}" placeholder="Describe your product..."></textarea>
+                </div>
+
+                <div class="admin-form-group">
+                    <label for="price">Price (৳)</label>
+                    <input type="number" id="price" step="0.01" min="0" th:field="*{price}" placeholder="0.00" required/>
+                </div>
+
+                <div class="admin-form-group">
+                    <label for="stockQuantity">Stock Quantity</label>
+                    <input type="number" id="stockQuantity" min="0" th:field="*{stockQuantity}" placeholder="0"/>
+                </div>
+
+                <div class="admin-form-group">
+                    <label for="brand">Brand</label>
+                    <input type="text" id="brand" th:field="*{brand}" placeholder="Your brand name"/>
+                </div>
+
+                <div class="admin-form-group">
+                    <label for="category">Category</label>
+                    <select id="category" th:field="*{category}">
+                        <option value="">-- Select Category --</option>
+                        <option th:each="c : ${categories}" th:value="${c}" th:text="${c}"></option>
+                    </select>
+                </div>
+
+                <div class="admin-form-group">
+                    <label for="imageFile">Upload Product Image</label>
+                    <input type="file" id="imageFile" name="imageFile" accept="image/*"/>
+                    <small class="admin-field-help">Upload an image for your product. Accepted formats: JPG, PNG, WEBP.</small>
+                </div>
+
+                <div class="admin-form-group">
+                    <label for="imageUrl">Image URL (Optional)</label>
+                    <input type="text" id="imageUrl" th:field="*{imageUrl}" placeholder="https://... (paste a direct image URL)" autocomplete="off"/>
+                    <small class="admin-field-help">Use this if you already have a hosted image URL instead of uploading a file.</small>
+                </div>
+
+                <div class="admin-form-actions">
+                    <button type="submit" class="admin-btn admin-btn-primary">Create Product</button>
+                    <a th:href="@{/seller/products}" class="admin-btn admin-btn-neutral">Cancel</a>
+                </div>
+
+            </form>
+        </div>
+
+    </div>
+
+    <div th:replace="fragments/footer :: siteFooter"></div>
+</div>
+
+</body>
+</html>

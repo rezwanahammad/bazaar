@@ -55,7 +55,13 @@ public class UserService {
             user.setUsername(user.getEmail());
         }
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        user.setRole("ROLE_USER");
+        // Whitelist: only BUYER or SELLER may be chosen at self-registration
+        String requestedRole = user.getRole();
+        if ("ROLE_SELLER".equals(requestedRole)) {
+            user.setRole("ROLE_SELLER");
+        } else {
+            user.setRole("ROLE_BUYER");
+        }
         return userRepository.save(user);
     }
 

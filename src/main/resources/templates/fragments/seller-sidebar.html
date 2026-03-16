@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<div th:fragment="sellerSidebar(active)">
+    <aside class="admin-sidebar">
+
+        <a th:href="@{/seller/products}" class="admin-sidebar-brand">
+            Bazaar <span class="seller-brand-accent">Seller</span>
+        </a>
+
+        <nav class="admin-nav">
+            <a th:href="@{/seller/products}"
+               th:classappend="${active == 'products'} ? ' active' : ''">
+                &#128230; My Products
+            </a>
+            <a th:href="@{/seller/products/create}"
+               th:classappend="${active == 'create'} ? ' active' : ''">
+                &#43; Add New Product
+            </a>
+        </nav>
+
+        <div class="admin-sidebar-footer">
+            <a th:href="@{/}">&#8592; Back to Store</a>
+        </div>
+
+    </aside>
+</div>
+
+</body>
+</html>
