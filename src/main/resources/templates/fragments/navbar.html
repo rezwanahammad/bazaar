@@ -40,7 +40,9 @@
             <a th:href="@{/profile}" class="icon nav-username" title="My Profile">
                 <i class="fa-solid fa-circle-user"></i> <span sec:authentication="name"></span>
             </a>
-            <a th:href="@{/cart}" class="icon" title="Cart"><i class="fa-solid fa-cart-shopping"></i></a>
+            <a sec:authorize="hasAnyRole('BUYER', 'ADMIN')" th:href="@{/orders}" class="icon" title="My Orders"><i class="fa-solid fa-box"></i></a>
+            <a sec:authorize="hasAnyRole('BUYER', 'ADMIN')" th:href="@{/cart}" class="icon" title="Cart"><i class="fa-solid fa-cart-shopping"></i></a>
+            <a sec:authorize="hasRole('SELLER')" th:href="@{/seller/products}" class="icon" title="My Products"><i class="fa-solid fa-store"></i></a>
             <a sec:authorize="hasRole('ADMIN')" th:href="@{/admin}" class="icon" title="Admin Panel"><i class="fa-solid fa-gear"></i></a>
         </div>
 

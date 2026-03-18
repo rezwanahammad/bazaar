@@ -40,4 +40,9 @@ public class CartService {
     public void removeItem(String username, Long productId, String size) {
         cartRepository.deleteByUsernameAndProductIdAndSize(username, productId, size);
     }
+
+    @Transactional
+    public void clearCart(String username) {
+        cartRepository.deleteByUsername(username);
+    }
 }

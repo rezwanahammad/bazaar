@@ -22,6 +22,10 @@
                th:classappend="${active == 'users'} ? ' active' : ''">
                 &#128101; Users
             </a>
+            <a th:href="@{/admin/payments}"
+               th:classappend="${active == 'payments'} ? ' active' : ''">
+                &#128179; Payments
+            </a>
         </nav>
 
         <div class="admin-sidebar-footer">

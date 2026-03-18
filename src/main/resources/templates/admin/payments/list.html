@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payments | Bazaar Admin</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<div th:replace="fragments/admin-sidebar :: sidebar('payments')"></div>
+
+<div class="admin-content">
+
+    <div class="admin-topbar">
+        <h1>Payments</h1>
+        <span class="admin-topbar-meta">Manual payment verification</span>
+    </div>
+
+    <div class="admin-body">
+        <div class="review-feedback review-feedback-success" th:if="${paymentMessage}" th:text="${paymentMessage}">Payment updated</div>
+
+        <div class="admin-table-wrap">
+            <div class="admin-table-header">
+                <h2>All Payment Requests</h2>
+            </div>
+
+            <table class="admin-table">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Order</th>
+                    <th>Method</th>
+                    <th>Txn ID</th>
+                    <th>Phone</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:if="${#lists.isEmpty(payments)}">
+                    <td colspan="7">No payments found.</td>
+                </tr>
+                <tr th:each="payment : ${payments}">
+                    <td th:text="${payment.id}">0</td>
+                    <td th:text="${payment.order.id}">0</td>
+                    <td th:text="${payment.method.displayName}">bKash</td>
+                    <td th:text="${payment.transactionId != null ? payment.transactionId : '-'}">-</td>
+                    <td th:text="${payment.phone != null ? payment.phone : '-'}">-</td>
+                    <td>
+                        <span class="admin-badge"
+                              th:classappend="${payment.status.name() == 'APPROVED'} ? ' admin-badge-admin' : (${payment.status.name() == 'REJECTED'} ? ' admin-badge-user' : ' admin-badge')"
+                              th:text="${payment.status}">PENDING</span>
+                    </td>
+                    <td>
+                        <div class="admin-actions" th:if="${payment.status.name() == 'PENDING'}">
+                            <form th:action="@{/admin/payments/{id}/approve(id=${payment.id})}" method="post">
+                                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                                <button type="submit" class="admin-btn admin-btn-success">Approve</button>
+                            </form>
+                            <form th:action="@{/admin/payments/{id}/reject(id=${payment.id})}" method="post">
+                                <input type="text" name="reason" placeholder="Reason" class="admin-reject-reason">
+                                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                                <button type="submit" class="admin-btn admin-btn-danger">Reject</button>
+                            </form>
+                        </div>
+                        <span th:if="${payment.status.name() != 'PENDING'}">-</span>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div th:replace="fragments/footer :: siteFooter"></div>
+</div>
+
+</body>
+</html>

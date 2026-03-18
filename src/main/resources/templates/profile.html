@@ -22,8 +22,8 @@
         <div class="profile-name" th:text="${currentUser.username}">Username</div>
 
         <span class="profile-role-badge"
-              th:classappend="${currentUser.role == 'ROLE_ADMIN'} ? ' profile-role-admin' : ' profile-role-user'"
-              th:text="${currentUser.role == 'ROLE_ADMIN'} ? 'Admin' : 'User'">
+              th:classappend="${currentUser.role == 'ROLE_ADMIN'} ? ' profile-role-admin' : (${currentUser.role == 'ROLE_SELLER'} ? ' profile-role-seller' : ' profile-role-user')"
+              th:text="${currentUser.role == 'ROLE_ADMIN'} ? 'Admin' : (${currentUser.role == 'ROLE_SELLER'} ? 'Seller' : 'Buyer')">
         </span>
 
         <div class="profile-info-grid">
@@ -40,7 +40,9 @@
 
             <div class="profile-info-row">
                 <span class="profile-info-label">Role</span>
-                <span class="profile-info-value" th:text="${currentUser.role == 'ROLE_ADMIN'} ? 'Administrator' : 'Customer'"></span>
+                <span class="profile-info-value"
+                      th:text="${currentUser.role == 'ROLE_ADMIN'} ? 'Administrator' : (${currentUser.role == 'ROLE_SELLER'} ? 'Seller' : 'Buyer')">
+                </span>
             </div>
 
             <div class="profile-info-row">
@@ -59,6 +61,9 @@
         <div class="profile-actions">
             <a th:if="${currentUser.role == 'ROLE_ADMIN'}" th:href="@{/admin}" class="profile-btn profile-btn-admin">
                 <i class="fa-solid fa-gear"></i> Go to Admin Panel
+            </a>
+            <a th:if="${currentUser.role == 'ROLE_SELLER'}" th:href="@{/seller/products}" class="profile-btn profile-btn-seller">
+                <i class="fa-solid fa-store"></i> Go to Seller Panel
             </a>
             <form th:action="@{/logout}" method="post">
                 <button type="submit" class="profile-btn profile-btn-logout"><i class="fa-solid fa-right-from-bracket"></i> Logout</button>

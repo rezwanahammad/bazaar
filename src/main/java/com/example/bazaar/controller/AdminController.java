@@ -41,7 +41,19 @@ public class AdminController {
 
     @PostMapping("/users/{id}/remove-admin")
     public String removeAdmin(@PathVariable Long id) {
-        userService.setRole(id, "ROLE_USER");
+        userService.setRole(id, "ROLE_BUYER");
+        return "redirect:/admin/users";
+    }
+
+    @PostMapping("/users/{id}/make-seller")
+    public String makeSeller(@PathVariable Long id) {
+        userService.setRole(id, "ROLE_SELLER");
+        return "redirect:/admin/users";
+    }
+
+    @PostMapping("/users/{id}/remove-seller")
+    public String removeSeller(@PathVariable Long id) {
+        userService.setRole(id, "ROLE_BUYER");
         return "redirect:/admin/users";
     }
 }

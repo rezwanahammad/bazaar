@@ -57,6 +57,14 @@
 					<textarea id="billingAddress" rows="3" th:field="*{billingAddress}" required></textarea>
 				</div>
 
+				<div class="auth-field auth-field-full">
+					<label for="role">Account Type</label>
+					<select id="role" th:field="*{role}">
+						<option value="ROLE_BUYER">Buyer (Customer)</option>
+						<option value="ROLE_SELLER">Seller</option>
+					</select>
+				</div>
+
 				<button type="submit" class="auth-submit-btn auth-submit-wide">Create Account</button>
 			</form>
 

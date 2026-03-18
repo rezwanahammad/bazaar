@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Orders | Bazaar</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<div th:replace="fragments/navbar :: navbar"></div>
+
+<main class="orders-page">
+    <section class="orders-shell">
+        <header class="orders-head">
+            <h1>My Orders</h1>
+            <p>Track your recent orders and payment status.</p>
+        </header>
+
+        <section class="orders-empty" th:if="${#lists.isEmpty(orders)}">
+            <p>You have no orders yet.</p>
+            <a th:href="@{/products}" class="product-cta product-cta-primary">Start Shopping</a>
+        </section>
+
+        <div class="orders-list" th:if="${!#lists.isEmpty(orders)}">
+            <article class="orders-item" th:each="order : ${orders}">
+                <header>
+                    <h2 th:text="'Order #' + ${order.id}">Order #0</h2>
+                    <span th:text="${#temporals.format(order.createdAt, 'dd MMM yyyy hh:mm a')}">01 Jan 2026 10:00 AM</span>
+                </header>
+
+                <div class="orders-meta">
+                    <p><strong>Status:</strong> <span th:text="${order.status}">PENDING</span></p>
+                    <p><strong>Payment:</strong> <span th:text="${order.paymentMethod.displayName}">bKash</span></p>
+                    <p><strong>Items:</strong> <span th:text="${order.totalItems}">1</span></p>
+                    <p><strong>Total:</strong> <span th:text="'৳' + ${order.totalAmount}">৳0</span></p>
+                </div>
+            </article>
+        </div>
+    </section>
+</main>
+
+<div th:replace="fragments/footer :: siteFooter"></div>
+
+</body>
+</html>

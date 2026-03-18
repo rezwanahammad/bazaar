@@ -52,4 +52,13 @@ public class ProductService {
         productRepository.deleteById(id);
     }
 
+    public List<Product> getProductsBySeller(String username) {
+        return productRepository.findBySellerUsernameOrderByCreatedAtDesc(username);
+    }
+
+    public Product getProductByIdAndSeller(Long id, String username) {
+        return productRepository.findByIdAndSellerUsername(id, username)
+                .orElseThrow(() -> new IllegalArgumentException("Product not found or access denied."));
+    }
+
 }

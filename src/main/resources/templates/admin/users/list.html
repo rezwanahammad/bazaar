@@ -43,29 +43,53 @@
                         <td th:text="${u.email}"></td>
                         <td>
                             <span class="admin-badge"
-                                  th:classappend="${u.role == 'ROLE_ADMIN'} ? ' admin-badge-admin' : ' admin-badge-user'"
-                                  th:text="${u.role == 'ROLE_ADMIN'} ? 'Admin' : 'User'">
+                                  th:classappend="${u.role == 'ROLE_ADMIN'} ? ' admin-badge-admin' : (${u.role == 'ROLE_SELLER'} ? ' admin-badge-seller' : ' admin-badge-user')"
+                                  th:text="${u.role == 'ROLE_ADMIN'} ? 'Admin' : (${u.role == 'ROLE_SELLER'} ? 'Seller' : 'Buyer')">
                             </span>
                         </td>
                         <td th:text="${#temporals.format(u.createdAt, 'dd MMM yyyy')}"></td>
-                        <td>
-                            <!-- Promote to admin -->
+                        <td class="admin-role-actions">
+                            <!-- Promote any non-admin to admin -->
                             <form th:if="${u.role != 'ROLE_ADMIN'}"
                                   th:action="@{/admin/users/{id}/make-admin(id=${u.id})}"
                                   method="post" style="display:inline">
+                                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
                                 <button type="submit" class="admin-btn admin-btn-info"
-                                        onclick="return confirm('Make this user an admin?')">
+                                        onclick="return confirm('Grant admin role to this user?')">
                                     Make Admin
                                 </button>
                             </form>
 
-                            <!-- Remove admin -->
+                            <!-- Demote admin → buyer -->
                             <form th:if="${u.role == 'ROLE_ADMIN'}"
                                   th:action="@{/admin/users/{id}/remove-admin(id=${u.id})}"
                                   method="post" style="display:inline">
+                                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
                                 <button type="submit" class="admin-btn admin-btn-danger"
                                         onclick="return confirm('Remove admin role from this user?')">
                                     Remove Admin
+                                </button>
+                            </form>
+
+                            <!-- Promote buyer → seller -->
+                            <form th:if="${u.role == 'ROLE_BUYER'}"
+                                  th:action="@{/admin/users/{id}/make-seller(id=${u.id})}"
+                                  method="post" style="display:inline">
+                                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                                <button type="submit" class="admin-btn admin-btn-warning"
+                                        onclick="return confirm('Grant seller role to this user?')">
+                                    Make Seller
+                                </button>
+                            </form>
+
+                            <!-- Demote seller → buyer -->
+                            <form th:if="${u.role == 'ROLE_SELLER'}"
+                                  th:action="@{/admin/users/{id}/remove-seller(id=${u.id})}"
+                                  method="post" style="display:inline">
+                                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                                <button type="submit" class="admin-btn admin-btn-neutral"
+                                        onclick="return confirm('Remove seller role from this user?')">
+                                    Remove Seller
                                 </button>
                             </form>
                         </td>

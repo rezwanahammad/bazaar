@@ -3,26 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Products | Bazaar Admin</title>
+    <title>My Products | Bazaar Seller</title>
     <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 <body>
 
-<div th:replace="fragments/admin-sidebar :: sidebar('products')"></div>
+<div th:replace="fragments/seller-sidebar :: sellerSidebar('products')"></div>
 
 <div class="admin-content">
 
     <div class="admin-topbar">
-        <h1>Products</h1>
-        <span class="admin-topbar-meta">Manage your store's product catalogue</span>
+        <h1>My Products</h1>
+        <span class="admin-topbar-meta">Manage your listed products</span>
     </div>
 
     <div class="admin-body">
 
+        <div class="review-feedback review-feedback-success" th:if="${successMessage}" th:text="${successMessage}">Success</div>
+        <div class="review-feedback review-feedback-error" th:if="${errorMessage}" th:text="${errorMessage}">Error</div>
+
         <div class="admin-table-wrap">
             <div class="admin-table-header">
-                <h2>All Products</h2>
-                <a th:href="@{/admin/products/create}" class="admin-btn admin-btn-primary">+ Add Product</a>
+                <h2>Product Listings</h2>
+                <a th:href="@{/seller/products/create}" class="admin-btn admin-btn-primary">+ Add Product</a>
             </div>
 
             <table class="admin-table">
@@ -33,11 +36,17 @@
                         <th>Name</th>
                         <th>Price</th>
                         <th>Category</th>
-                        <th>Seller</th>
+                        <th>Stock</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
+                    <tr th:if="${#lists.isEmpty(products)}">
+                        <td colspan="7" style="text-align:center; padding:24px; color:#64748b;">
+                            You haven't listed any products yet.
+                            <a th:href="@{/seller/products/create}" style="color:#6c8ef5; font-weight:700;">Add your first product</a>
+                        </td>
+                    </tr>
                     <tr th:each="p : ${products}">
                         <td th:text="${p.id}"></td>
                         <td><img th:src="${p.imageUrl}" alt="product"></td>
@@ -46,11 +55,10 @@
                         <td>
                             <span class="admin-badge admin-badge-user" th:text="${p.category}"></span>
                         </td>
-                        <td th:text="${p.sellerUsername != null ? p.sellerUsername : 'Admin'}"></td>
+                        <td th:text="${p.stockQuantity != null ? p.stockQuantity : 0}"></td>
                         <td>
-                            <a th:href="@{/admin/products/{id}/edit(id=${p.id})}" class="admin-btn admin-btn-warning">Edit</a>
-
-                            <form th:action="@{/admin/products/{id}/delete(id=${p.id})}" method="post" style="display:inline">
+                            <a th:href="@{/seller/products/{id}/edit(id=${p.id})}" class="admin-btn admin-btn-warning">Edit</a>
+                            <form th:action="@{/seller/products/{id}/delete(id=${p.id})}" method="post" style="display:inline">
                                 <button type="submit" class="admin-btn admin-btn-danger"
                                         onclick="return confirm('Delete this product?')">Delete</button>
                             </form>

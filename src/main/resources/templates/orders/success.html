@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Placed | Bazaar</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<div th:replace="fragments/navbar :: navbar"></div>
+
+<main class="order-success-page">
+    <section class="order-success-card">
+        <p class="order-success-kicker">Order Confirmed</p>
+        <h1>Thanks for your order!</h1>
+        <p>Your order has been placed successfully.</p>
+
+        <div class="order-success-grid">
+            <div>
+                <span>Order ID</span>
+                <strong th:text="${order.id}">0</strong>
+            </div>
+            <div>
+                <span>Status</span>
+                <strong th:text="${order.status}">PENDING</strong>
+            </div>
+            <div>
+                <span>Payment Method</span>
+                <strong th:text="${order.paymentMethod.displayName}">bKash</strong>
+            </div>
+            <div>
+                <span>Total Amount</span>
+                <strong th:text="'৳' + ${order.totalAmount}">৳0</strong>
+            </div>
+        </div>
+
+        <div class="order-success-actions">
+            <a th:href="@{/orders}" class="product-cta product-cta-primary">View My Orders</a>
+            <a th:href="@{/products}" class="product-cta product-cta-secondary">Continue Shopping</a>
+        </div>
+    </section>
+</main>
+
+<div th:replace="fragments/footer :: siteFooter"></div>
+
+</body>
+</html>
