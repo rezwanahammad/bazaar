@@ -30,16 +30,18 @@ public class OrderService {
 
     @Transactional
     public OrderEntity placeOrder(String username, PaymentMethod method, String transactionId, String phone) {
-        List<CartItemEntity> cartItems = cartService.getCartForUser(username);
-        if (cartItems.isEmpty()) {
-            throw new IllegalStateException("Your cart is empty.");
-        }
 
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new IllegalArgumentException("User not found."));
 
         if (method == null) {
             throw new IllegalArgumentException("Please select a payment method.");
+        }
+
+        List<CartItemEntity> cartItems = cartService.getCartForUser(username);
+
+        if (cartItems.isEmpty()) {
+            throw new IllegalStateException("Your cart is empty.");
         }
 
         if (method.isManualGateway()) {
@@ -81,12 +83,16 @@ public class OrderService {
         payment.setMethod(method);
         payment.setTransactionId(isBlank(transactionId) ? null : transactionId.trim());
         payment.setPhone(isBlank(phone) ? null : phone.trim());
-        payment.setStatus(method == PaymentMethod.COD ? PaymentStatus.NOT_REQUIRED : PaymentStatus.PENDING);
+        payment.setStatus(method == PaymentMethod.COD
+                ? PaymentStatus.NOT_REQUIRED
+                : PaymentStatus.PENDING);
         payment.setPaidAt(method == PaymentMethod.COD ? null : LocalDateTime.now());
+
         order.setPayment(payment);
 
         OrderEntity saved = orderRepository.save(order);
         cartService.clearCart(username);
+
         return saved;
     }
 
