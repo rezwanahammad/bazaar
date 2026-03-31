@@ -5,26 +5,14 @@ on:
     branches: [main]
   pull_request:
     branches: [main]
+  workflow_dispatch:
 
 jobs:
   build:
     runs-on: ubuntu-latest
-
-    services:
-      postgres:
-        image: postgres:16
-        env:
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: 2107072
-          POSTGRES_DB: bazaar_db
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd="pg_isready -U postgres"
-          --health-interval=10s
-          --health-timeout=5s
-          --health-retries=5
-
+    env:
+      SPRING_PROFILES_ACTIVE: test
+      DOTENV_ENABLED: "false"
     steps:
       - uses: actions/checkout@v4
 
@@ -42,9 +30,8 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-maven-
 
+      - name: Ensure Maven wrapper is executable
+        run: chmod +x mvnw
+
       - name: Build with Maven
-        run: mvn clean verify
-        env:
-          SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/bazaar_db
-          SPRING_DATASOURCE_USERNAME: postgres
-          SPRING_DATASOURCE_PASSWORD: 2107072
+        run: ./mvnw clean verify
