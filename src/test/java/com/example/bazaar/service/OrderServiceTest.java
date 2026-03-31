@@ -1,6 +1,8 @@
 package com.example.bazaar.service;
 
 import com.example.bazaar.enums.PaymentMethod;
+import com.example.bazaar.mapper.OrderItemMapper;
+import com.example.bazaar.mapper.OrderMapper;
 import com.example.bazaar.model.CartItemEntity;
 import com.example.bazaar.model.OrderEntity;
 import com.example.bazaar.model.User;
@@ -22,6 +24,7 @@ class OrderServiceTest {
     private OrderRepository orderRepository;
     private UserRepository userRepository;
     private CartService cartService;
+        private OrderMapper orderMapper;
     private OrderService orderService;
 
     @BeforeEach
@@ -29,8 +32,9 @@ class OrderServiceTest {
         orderRepository = mock(OrderRepository.class);
         userRepository = mock(UserRepository.class);
         cartService = mock(CartService.class);
+        orderMapper = new OrderMapper(new OrderItemMapper());
 
-        orderService = new OrderService(orderRepository, userRepository, cartService);
+        orderService = new OrderService(orderRepository, userRepository, cartService, orderMapper);
     }
 
     @Test

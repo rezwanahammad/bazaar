@@ -1,6 +1,7 @@
 package com.example.bazaar.service;
 
 import com.example.bazaar.enums.Category;
+import com.example.bazaar.mapper.ProductMapper;
 import com.example.bazaar.model.Product;
 import com.example.bazaar.repository.ProductRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -20,7 +21,7 @@ class ProductServiceTest {
     @BeforeEach
     void setup() {
         productRepository = mock(ProductRepository.class);
-        productService = new ProductService(productRepository);
+        productService = new ProductService(productRepository, new ProductMapper());
     }
 
     @Test

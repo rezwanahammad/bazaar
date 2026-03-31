@@ -10,8 +10,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.example.bazaar.dto.ProductDto;
 import com.example.bazaar.enums.Category;
-import com.example.bazaar.model.Product;
 import com.example.bazaar.service.CloudinaryImageService;
 import com.example.bazaar.service.ProductService;
 
@@ -27,20 +27,20 @@ public class AdminProductController {
 
     @GetMapping
     public String listProducts(Model model) {
-        model.addAttribute("products", productService.getAllProducts());
+        model.addAttribute("products", productService.getAllProductDtos());
         return "admin/product/list";
     }
 
     @GetMapping("/create")
     public String createProductPage(Model model) {
-        model.addAttribute("product", new Product());
+        model.addAttribute("product", new ProductDto());
         model.addAttribute("categories", Category.values());
         return "admin/product/create";
     }
 
     @PostMapping
     public String createProduct(
-            @ModelAttribute Product product,
+            @ModelAttribute ProductDto product,
             @RequestParam(value = "imageFile", required = false) MultipartFile imageFile
     ) {
         boolean hasImageFile = imageFile != null && !imageFile.isEmpty();
@@ -59,7 +59,7 @@ public class AdminProductController {
 
     @GetMapping("/{id}/edit")
     public String editProductPage(@PathVariable Long id, Model model) {
-        Product product = productService.getProductById(id);
+        ProductDto product = productService.getProductDtoById(id);
         model.addAttribute("product", product);
         model.addAttribute("categories", Category.values());
         return "admin/product/edit";
@@ -74,10 +74,10 @@ public class AdminProductController {
     @PostMapping("/{id}")
     public String updateProduct(
             @PathVariable Long id,
-            @ModelAttribute Product product,
+            @ModelAttribute ProductDto product,
             @RequestParam(value = "imageFile", required = false) MultipartFile imageFile
     ) {
-        Product existing = productService.getProductById(id);
+        ProductDto existing = productService.getProductDtoById(id);
         boolean hasImageFile = imageFile != null && !imageFile.isEmpty();
         String uploadedImageUrl = cloudinaryImageService.uploadProductImage(imageFile);
 

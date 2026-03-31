@@ -22,14 +22,14 @@ public class AdminController {
 
     @GetMapping
     public String dashboard(Model model) {
-        model.addAttribute("productCount", productService.getAllProducts().size());
-        model.addAttribute("userCount", userService.getAllUsers().size());
+        model.addAttribute("productCount", productService.getAllProductDtos().size());
+        model.addAttribute("userCount", userService.getAllUserDtos().size());
         return "admin/dashboard";
     }
 
     @GetMapping("/users")
     public String listUsers(Model model) {
-        model.addAttribute("users", userService.getAllUsers());
+        model.addAttribute("users", userService.getAllUserDtos());
         return "admin/users/list";
     }
 

@@ -11,8 +11,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.example.bazaar.model.CartItemEntity;
-import com.example.bazaar.model.Product;
+import com.example.bazaar.dto.CartItemDto;
+import com.example.bazaar.dto.ProductDto;
 import com.example.bazaar.service.CartService;
 import com.example.bazaar.service.ProductService;
 
@@ -27,14 +27,14 @@ public class CartController {
 
     @GetMapping("/cart")
     public String cart(Model model, Authentication auth) {
-    List<CartItemEntity> cartItems = cartService.getCartForUser(auth.getName());
+    List<CartItemDto> cartItems = cartService.getCartDtosForUser(auth.getName());
 
     BigDecimal subtotal = cartItems.stream()
-        .map(CartItemEntity::getLineTotal)
+        .map(CartItemDto::getLineTotal)
         .reduce(BigDecimal.ZERO, BigDecimal::add);
 
     int totalQuantity = cartItems.stream()
-        .mapToInt(CartItemEntity::getQuantity)
+        .mapToInt(CartItemDto::getQuantity)
         .sum();
 
         model.addAttribute("cartItems", cartItems);
@@ -53,7 +53,7 @@ public class CartController {
             Authentication auth,
             RedirectAttributes redirectAttributes
     ) {
-        Product product = productService.getProductById(productId);
+        ProductDto product = productService.getProductDtoById(productId);
         String normalizedSize = (size == null || size.isBlank()) ? "M-42/27" : size.trim();
         int normalizedQuantity = quantity == null ? 1 : Math.max(1, quantity);
 

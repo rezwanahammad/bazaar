@@ -1,10 +1,13 @@
 package com.example.bazaar.service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.example.bazaar.dto.UserDto;
+import com.example.bazaar.mapper.UserMapper;
 import com.example.bazaar.model.User;
 import com.example.bazaar.repository.UserRepository;
 
@@ -17,6 +20,7 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final UserMapper userMapper;
 
     @PostConstruct
     public void seedAdmin() {
@@ -67,6 +71,13 @@ public class UserService {
 
     public List<User> getAllUsers(){
         return userRepository.findAll();
+    }
+
+    public List<UserDto> getAllUserDtos() {
+        return userRepository.findAll()
+                .stream()
+                .map(userMapper::toDto)
+                .collect(Collectors.toList());
     }
 
     public void setRole(Long id, String role){
