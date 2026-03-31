@@ -43,7 +43,7 @@
                 </tr>
                 <tr th:each="payment : ${payments}">
                     <td th:text="${payment.id}">0</td>
-                    <td th:text="${payment.order.id}">0</td>
+                    <td th:text="${payment.orderId}">0</td>
                     <td th:text="${payment.method.displayName}">bKash</td>
                     <td th:text="${payment.transactionId != null ? payment.transactionId : '-'}">-</td>
                     <td th:text="${payment.phone != null ? payment.phone : '-'}">-</td>

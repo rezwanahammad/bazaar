@@ -2,10 +2,13 @@ package com.example.bazaar.service;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.example.bazaar.dto.CartItemDto;
+import com.example.bazaar.mapper.CartItemMapper;
 import com.example.bazaar.model.CartItemEntity;
 import com.example.bazaar.repository.CartRepository;
 
@@ -16,9 +19,17 @@ import lombok.RequiredArgsConstructor;
 public class CartService {
 
     private final CartRepository cartRepository;
+    private final CartItemMapper cartItemMapper;
 
     public List<CartItemEntity> getCartForUser(String username) {
         return cartRepository.findByUsernameOrderByIdAsc(username);
+    }
+
+    public List<CartItemDto> getCartDtosForUser(String username) {
+        return cartRepository.findByUsernameOrderByIdAsc(username)
+                .stream()
+                .map(cartItemMapper::toDto)
+                .collect(Collectors.toList());
     }
 
     @Transactional

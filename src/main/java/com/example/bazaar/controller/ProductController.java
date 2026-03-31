@@ -12,9 +12,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.example.bazaar.dto.ProductDto;
+import com.example.bazaar.dto.ReviewDto;
 import com.example.bazaar.enums.Category;
-import com.example.bazaar.model.Product;
-import com.example.bazaar.model.Review;
 import com.example.bazaar.service.ProductService;
 import com.example.bazaar.service.ReviewService;
 
@@ -29,15 +29,15 @@ public class ProductController {
 
     @GetMapping("/products")
     public String products(@RequestParam(value = "category", required = false) String category, Model model) {
-        List<Product> products;
+        List<ProductDto> products;
         String selectedCategory = "All Products";
 
         if (category != null && !category.isBlank()) {
             Category parsedCategory = parseCategory(category);
-            products = productService.getActiveProductsByCategory(parsedCategory);
+            products = productService.getActiveProductDtosByCategory(parsedCategory);
             selectedCategory = parsedCategory.name().replace('_', ' ');
         } else {
-            products = productService.getActiveProducts();
+            products = productService.getActiveProductDtos();
         }
 
         model.addAttribute("products", products);
@@ -47,9 +47,9 @@ public class ProductController {
 
     @GetMapping("/products/{id}")
     public String productDetails(@PathVariable Long id, Model model) {
-        Product product = productService.getProductById(id);
-        List<Product> relatedProducts = productService.getRelatedProducts(product);
-        List<Review> reviews = reviewService.getReviewsForProduct(id);
+        ProductDto product = productService.getProductDtoById(id);
+        List<ProductDto> relatedProducts = productService.getRelatedProductDtos(product);
+        List<ReviewDto> reviews = reviewService.getReviewDtosForProduct(id);
         BigDecimal oldPrice = product.getPrice() != null
                 ? product.getPrice().add(BigDecimal.valueOf(500))
                 : BigDecimal.ZERO;
@@ -84,8 +84,7 @@ public class ProductController {
             return "redirect:/products/" + id;
         }
 
-        Product product = productService.getProductById(id);
-        reviewService.createReview(product, reviewerName, rating, reviewText);
+        reviewService.createReview(id, reviewerName, rating, reviewText);
         redirectAttributes.addFlashAttribute("reviewSuccess", "Thanks! Your review has been submitted successfully.");
         return "redirect:/products/" + id;
     }

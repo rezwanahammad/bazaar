@@ -13,9 +13,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.example.bazaar.dto.CartItemDto;
+import com.example.bazaar.dto.OrderDto;
 import com.example.bazaar.enums.PaymentMethod;
-import com.example.bazaar.model.CartItemEntity;
-import com.example.bazaar.model.OrderEntity;
 import com.example.bazaar.service.CartService;
 import com.example.bazaar.service.OrderService;
 
@@ -33,14 +33,14 @@ public class CheckoutController {
 
     @GetMapping("/checkout")
     public String checkoutPage(Model model, Authentication auth, RedirectAttributes redirectAttributes) {
-        List<CartItemEntity> cartItems = cartService.getCartForUser(auth.getName());
+        List<CartItemDto> cartItems = cartService.getCartDtosForUser(auth.getName());
         if (cartItems.isEmpty()) {
             redirectAttributes.addFlashAttribute("cartSuccess", "Your cart is empty. Add products first.");
             return "redirect:/cart";
         }
 
         BigDecimal total = cartItems.stream()
-                .map(CartItemEntity::getLineTotal)
+                .map(CartItemDto::getLineTotal)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
         model.addAttribute("cartItems", cartItems);
@@ -59,7 +59,7 @@ public class CheckoutController {
             RedirectAttributes redirectAttributes
     ) {
         try {
-            OrderEntity order = orderService.placeOrder(auth.getName(), paymentMethod, transactionId, phone);
+            OrderDto order = orderService.placeOrderDto(auth.getName(), paymentMethod, transactionId, phone);
             return "redirect:/orders/" + order.getId() + "/success";
         } catch (IllegalArgumentException | IllegalStateException ex) {
             redirectAttributes.addFlashAttribute("checkoutError", ex.getMessage());
@@ -69,13 +69,13 @@ public class CheckoutController {
 
     @GetMapping("/orders")
     public String myOrders(Model model, Authentication auth) {
-        model.addAttribute("orders", orderService.getOrdersForUser(auth.getName()));
+        model.addAttribute("orders", orderService.getOrderDtosForUser(auth.getName()));
         return "orders/list";
     }
 
     @GetMapping("/orders/{orderId}/success")
     public String orderSuccess(@PathVariable Long orderId, Authentication auth, Model model) {
-        model.addAttribute("order", orderService.getOrderForUser(orderId, auth.getName()));
+        model.addAttribute("order", orderService.getOrderDtoForUser(orderId, auth.getName()));
         return "orders/success";
     }
 }

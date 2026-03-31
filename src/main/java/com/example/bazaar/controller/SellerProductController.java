@@ -12,8 +12,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.example.bazaar.dto.ProductDto;
 import com.example.bazaar.enums.Category;
-import com.example.bazaar.model.Product;
 import com.example.bazaar.service.CloudinaryImageService;
 import com.example.bazaar.service.ProductService;
 
@@ -29,20 +29,20 @@ public class SellerProductController {
 
     @GetMapping
     public String listProducts(Model model, Authentication auth) {
-        model.addAttribute("products", productService.getProductsBySeller(auth.getName()));
+        model.addAttribute("products", productService.getProductsBySellerDtos(auth.getName()));
         return "seller/products/list";
     }
 
     @GetMapping("/create")
     public String createProductPage(Model model) {
-        model.addAttribute("product", new Product());
+        model.addAttribute("product", new ProductDto());
         model.addAttribute("categories", Category.values());
         return "seller/products/create";
     }
 
     @PostMapping
     public String createProduct(
-            @ModelAttribute Product product,
+            @ModelAttribute ProductDto product,
             @RequestParam(value = "imageFile", required = false) MultipartFile imageFile,
             Authentication auth,
             RedirectAttributes redirectAttributes
@@ -71,7 +71,7 @@ public class SellerProductController {
             RedirectAttributes redirectAttributes
     ) {
         try {
-            model.addAttribute("product", productService.getProductByIdAndSeller(id, auth.getName()));
+            model.addAttribute("product", productService.getProductDtoByIdAndSeller(id, auth.getName()));
             model.addAttribute("categories", Category.values());
             return "seller/products/edit";
         } catch (IllegalArgumentException ex) {
@@ -83,13 +83,13 @@ public class SellerProductController {
     @PostMapping("/{id}")
     public String updateProduct(
             @PathVariable Long id,
-            @ModelAttribute Product product,
+            @ModelAttribute ProductDto product,
             @RequestParam(value = "imageFile", required = false) MultipartFile imageFile,
             Authentication auth,
             RedirectAttributes redirectAttributes
     ) {
         try {
-            Product existing = productService.getProductByIdAndSeller(id, auth.getName());
+            ProductDto existing = productService.getProductDtoByIdAndSeller(id, auth.getName());
             boolean hasImageFile = imageFile != null && !imageFile.isEmpty();
             String uploadedImageUrl = cloudinaryImageService.uploadProductImage(imageFile);
 
@@ -119,7 +119,7 @@ public class SellerProductController {
             RedirectAttributes redirectAttributes
     ) {
         try {
-            Product existing = productService.getProductByIdAndSeller(id, auth.getName());
+            ProductDto existing = productService.getProductDtoByIdAndSeller(id, auth.getName());
             productService.deleteProduct(existing.getId());
             redirectAttributes.addFlashAttribute("successMessage", "Product deleted.");
         } catch (IllegalArgumentException ex) {

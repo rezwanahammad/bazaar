@@ -22,7 +22,7 @@ public class AdminPaymentController {
 
     @GetMapping
     public String paymentList(Model model) {
-        model.addAttribute("payments", paymentAdminService.getAllPayments());
+        model.addAttribute("payments", paymentAdminService.getAllPaymentDtos());
         return "admin/payments/list";
     }
 

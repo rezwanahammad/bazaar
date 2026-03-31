@@ -1,6 +1,7 @@
 package com.example.bazaar.service;
 
 import com.example.bazaar.model.User;
+import com.example.bazaar.mapper.UserMapper;
 import com.example.bazaar.repository.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -15,7 +16,7 @@ public class UserServiceTest {
     void testRegisterUser() {
         UserRepository repo = mock(UserRepository.class);
         PasswordEncoder encoder = mock(PasswordEncoder.class);
-        UserService service = new UserService(repo, encoder);
+        UserService service = new UserService(repo, encoder, new UserMapper());
 
         User user = new User();
         user.setUsername("testuser");
