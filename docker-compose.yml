@@ -4,13 +4,26 @@ services:
     container_name: bazaar-postgres
     restart: always
     environment:
-      POSTGRES_DB: bazaar_db
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: 2107072
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     ports:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+
+  bazaar-app:
+    build: .
+    container_name: bazaar-app
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres
+    environment:
+      SPRING_DATASOURCE_URL: ${SPRING_DATASOURCE_URL}
+      SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME}
+      SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
+    restart: always
 
 volumes:
   postgres_data:

@@ -11,7 +11,8 @@ import org.springframework.transaction.annotation.Transactional;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
-@Transactional // rollback after test
+@Transactional
+@org.springframework.test.context.ActiveProfiles("test")
 public class LoginIntegrationTest {
 
     @Autowired
