@@ -28,8 +28,9 @@ public class OrderItem {
     @JoinColumn(name = "order_id", nullable = false)
     private OrderEntity order;
 
-    @Column(nullable = false)
-    private Long productId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "product_id", nullable = false)
+    private Product product;
 
     @Column(nullable = false)
     private String productName;
@@ -48,4 +49,19 @@ public class OrderItem {
 
     @Column(nullable = false, precision = 12, scale = 2)
     private BigDecimal lineTotal;
+
+    public Long getProductId() {
+        return product == null ? null : product.getId();
+    }
+
+    public void setProductId(Long productId) {
+        if (productId == null) {
+            product = null;
+            return;
+        }
+
+        Product reference = new Product();
+        reference.setId(productId);
+        product = reference;
+    }
 }

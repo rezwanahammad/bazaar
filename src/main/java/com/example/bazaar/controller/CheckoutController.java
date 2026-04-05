@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.example.bazaar.dto.CartItemDto;
+import com.example.bazaar.dto.ProductDto;
 import com.example.bazaar.dto.OrderDto;
 import com.example.bazaar.enums.PaymentMethod;
 import com.example.bazaar.service.CartService;
@@ -33,14 +33,14 @@ public class CheckoutController {
 
     @GetMapping("/checkout")
     public String checkoutPage(Model model, Authentication auth, RedirectAttributes redirectAttributes) {
-        List<CartItemDto> cartItems = cartService.getCartDtosForUser(auth.getName());
+        List<ProductDto> cartItems = cartService.getCartDtosForUser(auth.getName());
         if (cartItems.isEmpty()) {
             redirectAttributes.addFlashAttribute("cartSuccess", "Your cart is empty. Add products first.");
             return "redirect:/cart";
         }
 
         BigDecimal total = cartItems.stream()
-                .map(CartItemDto::getLineTotal)
+                .map(product -> product.getPrice() == null ? BigDecimal.ZERO : product.getPrice())
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
         model.addAttribute("cartItems", cartItems);

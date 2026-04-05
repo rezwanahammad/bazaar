@@ -1,61 +1,44 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Error</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        }
-        .error-wrapper {
-            min-height: 70vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 24px;
-        }
-        .error-container {
-            text-align: center;
-            background: white;
-            padding: 40px;
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-        h1 {
-            color: #d32f2f;
-            margin: 0;
-            font-size: 48px;
-        }
-        p {
-            color: #666;
-            font-size: 18px;
-            margin: 20px 0;
-        }
-        a {
-            display: inline-block;
-            margin-top: 20px;
-            padding: 10px 20px;
-            background-color: #667eea;
-            color: white;
-            text-decoration: none;
-            border-radius: 5px;
-        }
-        a:hover {
-            background-color: #764ba2;
-        }
-    </style>
+    <title>Error | Bazaar</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
+
 <body>
-    <div class="error-wrapper">
-        <div class="error-container">
-            <h1>⚠️ Oops!</h1>
-            <p>Sorry, an error occurred</p>
-            <a href="/">Go Home</a>
-        </div>
-    </div>
+
+    <!-- Navbar -->
+    <div th:replace="fragments/navbar :: navbar"></div>
+
+    <main class="home-main">
+        <section class="home-hero" style="min-height: 60vh; display:flex; align-items:center; justify-content:center;">
+
+            <div class="home-hero-overlay"></div>
+
+            <div class="home-hero-content" style="text-align:center;">
+                <h1 style="font-size: 48px;">⚠️ Oops!</h1>
+
+                <p class="home-subtitle">
+                    Sorry, an error occurred
+                </p>
+
+                <p class="home-subtitle" style="margin-top:10px;">
+                    Not what you were looking for?
+                </p>
+
+                <div class="home-cta-row" style="margin-top:20px;">
+                    <a th:href="@{/}" class="home-btn home-btn-primary">Go Home</a>
+                </div>
+            </div>
+
+        </section>
+    </main>
+
+    <!-- Footer -->
     <div th:replace="fragments/footer :: siteFooter"></div>
+
 </body>
 </html>
