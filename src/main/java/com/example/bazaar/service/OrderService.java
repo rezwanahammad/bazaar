@@ -14,6 +14,7 @@ import com.example.bazaar.dto.ProductDto;
 import com.example.bazaar.enums.OrderStatus;
 import com.example.bazaar.enums.PaymentMethod;
 import com.example.bazaar.enums.PaymentStatus;
+import com.example.bazaar.exception.ResourceNotFoundException;
 import com.example.bazaar.mapper.OrderMapper;
 import com.example.bazaar.model.OrderEntity;
 import com.example.bazaar.model.OrderItem;
@@ -56,7 +57,7 @@ public class OrderService {
     public OrderEntity placeOrder(String username, PaymentMethod method, String transactionId, String phone) {
 
         User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new IllegalArgumentException("User not found."));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found."));
 
         if (method == null) {
             throw new IllegalArgumentException("Please select a payment method.");
@@ -133,12 +134,12 @@ public class OrderService {
 
     public OrderEntity getOrderForUser(Long orderId, String username) {
         return orderRepository.findByIdAndUserUsername(orderId, username)
-                .orElseThrow(() -> new IllegalArgumentException("Order not found."));
+                .orElseThrow(() -> new ResourceNotFoundException("Order not found."));
     }
 
     public OrderDto getOrderDtoForUser(Long orderId, String username) {
         OrderEntity order = orderRepository.findByIdAndUserUsername(orderId, username)
-                .orElseThrow(() -> new IllegalArgumentException("Order not found."));
+                .orElseThrow(() -> new ResourceNotFoundException("Order not found."));
         return orderMapper.toDto(order);
     }
 
@@ -146,7 +147,7 @@ public class OrderService {
     public OrderDto placeOrderDto(String username, PaymentMethod method, String transactionId, String phone) {
 
         User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new IllegalArgumentException("User not found."));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found."));
 
         if (method == null) {
             throw new IllegalArgumentException("Please select a payment method.");
@@ -216,7 +217,7 @@ public class OrderService {
 
     private void attachProductReference(OrderItem item, Long productId) {
         if (productId == null) {
-            throw new IllegalArgumentException("Product not found.");
+            throw new ResourceNotFoundException("Product not found.");
         }
 
         if (productRepository != null) {
