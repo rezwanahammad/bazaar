@@ -1,6 +1,7 @@
 package com.example.bazaar.service;
 
 import com.example.bazaar.enums.PaymentMethod;
+import com.example.bazaar.exception.ResourceNotFoundException;
 import com.example.bazaar.mapper.OrderItemMapper;
 import com.example.bazaar.mapper.OrderMapper;
 import com.example.bazaar.model.OrderEntity;
@@ -102,7 +103,7 @@ class OrderServiceTest {
         when(cartService.getCartForUser(username))
                 .thenReturn(List.of());
 
-        assertThrows(IllegalArgumentException.class,
+        assertThrows(ResourceNotFoundException.class,
                 () -> orderService.placeOrder(username, PaymentMethod.COD, null, null));
     }
 
@@ -123,7 +124,7 @@ class OrderServiceTest {
         when(orderRepository.findByIdAndUserUsername(1L, "user"))
                 .thenReturn(Optional.empty());
 
-        assertThrows(IllegalArgumentException.class,
+        assertThrows(ResourceNotFoundException.class,
                 () -> orderService.getOrderForUser(1L, "user"));
     }
 }

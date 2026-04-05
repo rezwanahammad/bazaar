@@ -7,6 +7,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.example.bazaar.dto.UserDto;
+import com.example.bazaar.exception.ResourceNotFoundException;
 import com.example.bazaar.mapper.UserMapper;
 import com.example.bazaar.model.User;
 import com.example.bazaar.repository.UserRepository;
@@ -80,9 +81,15 @@ public class UserService {
                 .collect(Collectors.toList());
     }
 
+    public UserDto getUserDtoByUsername(String username) {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found."));
+        return userMapper.toDto(user);
+    }
+
     public void setRole(Long id, String role){
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found."));
         user.setRole(role);
         userRepository.save(user);
     }

@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import com.example.bazaar.dto.ProductDto;
 import com.example.bazaar.enums.Category;
+import com.example.bazaar.exception.ResourceNotFoundException;
 import com.example.bazaar.mapper.ProductMapper;
 import com.example.bazaar.model.Product;
 import com.example.bazaar.repository.ProductRepository;
@@ -64,12 +65,12 @@ public class ProductService {
 
     public Product getProductById(Long id){
         return productRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Product not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Product not found."));
     }
 
     public ProductDto getProductDtoById(Long id) {
         Product product = productRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Product not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Product not found."));
         return productMapper.toDto(product);
     }
 
@@ -107,14 +108,22 @@ public class ProductService {
                 .collect(Collectors.toList());
     }
 
+    public List<ProductDto> getActiveProductsBySellerDtos(String username) {
+        return productRepository.findBySellerUsernameOrderByCreatedAtDesc(username)
+                .stream()
+                .filter(Product::getActive)
+                .map(productMapper::toDto)
+                .collect(Collectors.toList());
+    }
+
     public Product getProductByIdAndSeller(Long id, String username) {
         return productRepository.findByIdAndSellerUsername(id, username)
-                .orElseThrow(() -> new IllegalArgumentException("Product not found or access denied."));
+                .orElseThrow(() -> new ResourceNotFoundException("Product not found or access denied."));
     }
 
     public ProductDto getProductDtoByIdAndSeller(Long id, String username) {
         Product product = productRepository.findByIdAndSellerUsername(id, username)
-                .orElseThrow(() -> new IllegalArgumentException("Product not found or access denied."));
+                .orElseThrow(() -> new ResourceNotFoundException("Product not found or access denied."));
         return productMapper.toDto(product);
     }
 

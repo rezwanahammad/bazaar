@@ -20,33 +20,29 @@ import com.example.bazaar.model.OrderItem;
 import com.example.bazaar.model.Payment;
 import com.example.bazaar.model.Product;
 import com.example.bazaar.model.User;
+import com.example.bazaar.repository.OrderRepository;
 import com.example.bazaar.repository.ProductRepository;
 import com.example.bazaar.repository.UserRepository;
 
 @Service
 public class OrderService {
 
-    private final com.example.bazaar.repository.OrderRepository orderRepository;
-    private final com.example.bazaar.repository.UserRepository userRepository;
+    private final OrderRepository orderRepository;
+    private final UserRepository userRepository;
     private final CartService cartService;
-    private final com.example.bazaar.mapper.OrderMapper orderMapper;
+    private final OrderMapper orderMapper;
     private final ProductRepository productRepository;
 
-    public OrderService(
-            com.example.bazaar.repository.OrderRepository orderRepository,
-            com.example.bazaar.repository.UserRepository userRepository,
-            CartService cartService,
-            com.example.bazaar.mapper.OrderMapper orderMapper
-    ) {
+    public OrderService(OrderRepository orderRepository, UserRepository userRepository, CartService cartService, OrderMapper orderMapper) {
         this(orderRepository, userRepository, cartService, orderMapper, null);
     }
 
     @Autowired
     public OrderService(
-            com.example.bazaar.repository.OrderRepository orderRepository,
-            com.example.bazaar.repository.UserRepository userRepository,
+            OrderRepository orderRepository,
+            UserRepository userRepository,
             CartService cartService,
-            com.example.bazaar.mapper.OrderMapper orderMapper,
+            OrderMapper orderMapper,
             ProductRepository productRepository
     ) {
         this.orderRepository = orderRepository;

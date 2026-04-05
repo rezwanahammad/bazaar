@@ -1,6 +1,5 @@
 # Bazaar
-
-A Spring Boot based online marketplace.
+A Spring Boot based online marketplace for gents fashion.
 
 ## Project Description
 The project aims to deliver a simple yet elegant online fashion market.The webapp focuses on men's tops and bottom wears and provides a minimalistic but intuitive category based navigation UI so that users can easily find the product of their desire.
@@ -10,7 +9,11 @@ Here users can browse their favorite products and add them to card or buy them. 
 ## Architecture
 Architecture type: Monolithic layered web application (Spring MVC + service + repository) with server-side rendered Thymeleaf views.
 
-The app contains of a Spring MVC based frontend written using ThymeLeaf for the frontend architecture. The HTTP endpoints follow REST naming principles and connect the frontend to the business logic layer. The backend database is a PostgresDB hosted on render as a service. Spring security is used to provide authentication and authorization.
+The app contains a Spring MVC based frontend written using Thymeleaf. It now has two endpoint styles:
+1. Web MVC endpoints for server-rendered pages (Thymeleaf + redirects).
+2. REST API endpoints under `/api/**` using explicit HTTP methods and status codes.
+
+The backend database is a PostgresDB hosted on render as a service. Spring Security is used to provide authentication and authorization.
 
 ![alt text](<architecture SEPM.png>)
 
@@ -35,11 +38,9 @@ The relationships are described below:
 5. Order (1:1) Payment: Payment for each order has to be paid in a single payment transaction.
 6. Product (1:M) Reviews: A product can have multiple reviews. 
 
-![alt text](<ER SEPM.png>)
+![alt text](<ER SEPM (1).png>)
 
-## API Endpoints
-Note: This app is server-rendered (Thymeleaf), so these are HTTP web endpoints (not JSON REST APIs).
-
+## Web Endpoints (Thymeleaf MVC)
 - `GET /`: Home page with featured active products.
 - `GET /error`: Generic error page.
 - `GET /register`: Registration form page.
@@ -77,6 +78,30 @@ Note: This app is server-rendered (Thymeleaf), so these are HTTP web endpoints (
 - `GET /seller/products/{id}/edit`: Seller edit form for owned product.
 - `POST /seller/products/{id}`: Seller update owned product.
 - `POST /seller/products/{id}/delete`: Seller delete owned product.
+
+## REST API Endpoints (`/api`)
+- `GET /api/products`: Get active products. Optional query param: `category`.
+- `GET /api/products/{id}`: Get a single product by id.
+- `GET /api/cart`: Get current user's cart items.
+- `POST /api/cart/items`: Add an item to cart.
+- `DELETE /api/cart/items/{productId}`: Remove an item from cart.
+- `GET /api/orders`: Get current user's orders.
+- `POST /api/orders`: Place an order.
+
+## HTTP Status Codes and Global Exception Handling
+REST API endpoints return explicit status codes:
+- `200 OK`: Successful GET requests.
+- `201 Created`: Successful resource creation (`POST /api/cart/items`, `POST /api/orders`).
+- `204 No Content`: Successful delete (`DELETE /api/cart/items/{productId}`).
+- `400 Bad Request`: Invalid input (`IllegalArgumentException`).
+- `403 Forbidden`: Access denied by role-based authorization.
+- `404 Not Found`: Missing resource (`ResourceNotFoundException`).
+- `409 Conflict`: Business-state conflict (`IllegalStateException`, e.g., empty cart checkout).
+- `500 Internal Server Error`: Unexpected/unhandled server errors.
+
+Global API exception mapping is implemented with:
+- `GlobalApiExceptionHandler` (scoped to `com.example.bazaar.controller.api`)
+- Standard error response payload: `ApiErrorResponse { timestamp, status, error, message, path }`
 
 ## CI/CD
 CI is implemented with GitHub Actions in `.github/workflows/maven.yml`, which runs on pushes and pull requests to `main`, sets up JDK 21, caches Maven dependencies, and runs `./mvnw clean verify` with the `test` profile. This test verifiacation phase is essential to ensure authorized and valid pushes to main.

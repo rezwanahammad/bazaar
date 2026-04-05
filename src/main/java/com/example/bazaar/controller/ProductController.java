@@ -14,9 +14,11 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.example.bazaar.dto.ProductDto;
 import com.example.bazaar.dto.ReviewDto;
+import com.example.bazaar.dto.UserDto;
 import com.example.bazaar.enums.Category;
 import com.example.bazaar.service.ProductService;
 import com.example.bazaar.service.ReviewService;
+import com.example.bazaar.service.UserService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -26,6 +28,7 @@ public class ProductController {
 
     private final ProductService productService;
     private final ReviewService reviewService;
+    private final UserService userService;
 
     @GetMapping("/products")
     public String products(@RequestParam(value = "category", required = false) String category, Model model) {
@@ -63,6 +66,18 @@ public class ProductController {
         model.addAttribute("reviewCount", reviewCount);
         model.addAttribute("oldPrice", oldPrice);
         return "products/detail";
+    }
+
+    @GetMapping("/seller")
+    public String sellerProfile(@RequestParam String username, Model model) {
+        UserDto seller = userService.getUserDtoByUsername(username);
+        List<ProductDto> sellerProducts = productService.getActiveProductsBySellerDtos(username);
+        long productCount = sellerProducts.size();
+
+        model.addAttribute("seller", seller);
+        model.addAttribute("sellerProducts", sellerProducts);
+        model.addAttribute("productCount", productCount);
+        return "seller/profile";
     }
 
     @PostMapping("/products/{id}/reviews")

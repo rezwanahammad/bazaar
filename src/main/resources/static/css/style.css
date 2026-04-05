@@ -1061,6 +1061,24 @@ body{
     color:#0f1729;
 }
 
+.product-seller-line{
+    margin:10px 0 0;
+    font-size:13px;
+    font-weight:700;
+    color:#0f1729;
+}
+
+.seller-profile-link{
+    color:#0066cc;
+    text-decoration:none;
+    transition: all 0.3s ease;
+}
+
+.seller-profile-link:hover{
+    color:#0052a3;
+    text-decoration:underline;
+}
+
 .qty-row{
     margin-top:12px;
     display:flex;
@@ -2053,6 +2071,8 @@ body{
     .size-chip{ font-size:12px; padding:4px 8px; }
 
     .product-brand-line{ font-size:13px; }
+
+    .product-seller-line{ font-size:13px; }
 
     .qty-row button,
     .qty-row span{
