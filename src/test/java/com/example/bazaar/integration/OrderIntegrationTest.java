@@ -1,10 +1,10 @@
 package com.example.bazaar.integration;
 
-import com.example.bazaar.model.CartItemEntity;
 import com.example.bazaar.model.OrderEntity;
+import com.example.bazaar.model.Product;
 import com.example.bazaar.model.User;
-import com.example.bazaar.repository.CartRepository;
 import com.example.bazaar.repository.OrderRepository;
+import com.example.bazaar.repository.ProductRepository;
 import com.example.bazaar.repository.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,10 +40,10 @@ class OrderIntegrationTest {
     private UserRepository userRepository;
 
     @Autowired
-    private CartRepository cartRepository;
+    private com.example.bazaar.repository.OrderRepository orderRepository;
 
     @Autowired
-    private OrderRepository orderRepository;
+    private ProductRepository productRepository;
 
     @Test
     @WithMockUser(username = "integrationUser", roles = {"BUYER"})
@@ -56,37 +56,36 @@ class OrderIntegrationTest {
 
         userRepository.save(user);
 
-        CartItemEntity item = new CartItemEntity();
-    item.setUsername("integrationUser");
-        item.setProductId(1L);
-        item.setProductName("Test Product");
-        item.setImageUrl("img.jpg");
-        item.setSize("M");
-        item.setUnitPrice(BigDecimal.valueOf(100));
-        item.setQuantity(2);
-    cartRepository.save(item);
+        Product product = new Product();
+        product.setName("Test Product");
+        product.setPrice(BigDecimal.valueOf(100));
+        product.setActive(true);
+        product = productRepository.save(product);
 
-    MvcResult result = assertDoesNotThrow(() -> mockMvc.perform(post("/checkout/place")
-            .with(csrf())
-            .param("paymentMethod", "COD"))
-        .andExpect(status().is3xxRedirection())
-        .andExpect(redirectedUrlPattern("/orders/*/success"))
-        .andReturn());
+        user.getCartProducts().add(product);
+        userRepository.save(user);
 
-    String redirectUrl = result.getResponse().getRedirectedUrl();
-    assertNotNull(redirectUrl);
+        MvcResult result = assertDoesNotThrow(() -> mockMvc.perform(post("/checkout/place")
+                .with(csrf())
+                .param("paymentMethod", "COD"))
+            .andExpect(status().is3xxRedirection())
+            .andExpect(redirectedUrlPattern("/orders/*/success"))
+            .andReturn());
 
-    Matcher matcher = Pattern.compile("/orders/(\\d+)/success").matcher(redirectUrl);
-    assertTrue(matcher.matches());
-    Long orderId = Long.parseLong(matcher.group(1));
+        String redirectUrl = result.getResponse().getRedirectedUrl();
+        assertNotNull(redirectUrl);
 
-    Optional<OrderEntity> savedOrder = orderRepository.findById(orderId);
-    assertTrue(savedOrder.isPresent());
+        Matcher matcher = Pattern.compile("/orders/(\\d+)/success").matcher(redirectUrl);
+        assertTrue(matcher.matches());
+        Long orderId = Long.parseLong(matcher.group(1));
 
-    OrderEntity order = savedOrder.get();
-    assertEquals(BigDecimal.valueOf(200), order.getTotalAmount());
-    assertEquals("integrationUser", order.getUser().getUsername());
+        Optional<OrderEntity> savedOrder = orderRepository.findById(orderId);
+        assertTrue(savedOrder.isPresent());
 
-    assertTrue(cartRepository.findByUsernameOrderByIdAsc("integrationUser").isEmpty());
+        OrderEntity order = savedOrder.get();
+        assertEquals(BigDecimal.valueOf(100), order.getTotalAmount());
+        assertEquals("integrationUser", order.getUser().getUsername());
+
+        assertTrue(userRepository.findByUsername("integrationUser").orElseThrow().getCartProducts().isEmpty());
     }
 }

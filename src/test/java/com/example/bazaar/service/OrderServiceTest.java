@@ -3,8 +3,8 @@ package com.example.bazaar.service;
 import com.example.bazaar.enums.PaymentMethod;
 import com.example.bazaar.mapper.OrderItemMapper;
 import com.example.bazaar.mapper.OrderMapper;
-import com.example.bazaar.model.CartItemEntity;
 import com.example.bazaar.model.OrderEntity;
+import com.example.bazaar.model.Product;
 import com.example.bazaar.model.User;
 import com.example.bazaar.repository.OrderRepository;
 import com.example.bazaar.repository.UserRepository;
@@ -21,20 +21,20 @@ import static org.mockito.Mockito.*;
 
 class OrderServiceTest {
 
-    private OrderRepository orderRepository;
-    private UserRepository userRepository;
+        private com.example.bazaar.repository.OrderRepository orderRepository;
+        private com.example.bazaar.repository.UserRepository userRepository;
     private CartService cartService;
-        private OrderMapper orderMapper;
+        private com.example.bazaar.mapper.OrderMapper orderMapper;
     private OrderService orderService;
 
     @BeforeEach
     void setup() {
-        orderRepository = mock(OrderRepository.class);
-        userRepository = mock(UserRepository.class);
+                orderRepository = mock(com.example.bazaar.repository.OrderRepository.class);
+                userRepository = mock(com.example.bazaar.repository.UserRepository.class);
         cartService = mock(CartService.class);
-        orderMapper = new OrderMapper(new OrderItemMapper());
+                orderMapper = new com.example.bazaar.mapper.OrderMapper(new OrderItemMapper());
 
-        orderService = new OrderService(orderRepository, userRepository, cartService, orderMapper);
+                orderService = new OrderService(orderRepository, userRepository, cartService, orderMapper);
     }
 
     @Test
@@ -46,19 +46,17 @@ class OrderServiceTest {
         user.setUsername(username);
         user.setAddress("Dhaka");
 
-        CartItemEntity item = new CartItemEntity();
-        item.setProductId(1L);
-        item.setProductName("Product");
-        item.setImageUrl("img.jpg");
-        item.setSize("M");
-        item.setUnitPrice(BigDecimal.valueOf(100));
-        item.setQuantity(2);
+        Product product = new Product();
+        product.setId(1L);
+        product.setName("Product");
+        product.setImageUrl("img.jpg");
+        product.setPrice(BigDecimal.valueOf(100));
 
         when(userRepository.findByUsername(username))
                 .thenReturn(Optional.of(user));
 
         when(cartService.getCartForUser(username))
-                .thenReturn(List.of(item));
+                .thenReturn(List.of(product));
 
         when(orderRepository.save(any(OrderEntity.class)))
                 .thenAnswer(i -> i.getArgument(0));

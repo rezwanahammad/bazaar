@@ -51,10 +51,9 @@
                 <h2>Order Summary</h2>
                 <div class="checkout-summary-item" th:each="item : ${cartItems}">
                     <div>
-                        <strong th:text="${item.productName}">Product</strong>
-                        <p th:text="'Qty: ' + ${item.quantity} + ' | Size: ' + ${item.size}">Qty: 1 | Size: M-42/27</p>
+                        <strong th:text="${item.name}">Product</strong>
                     </div>
-                    <span th:text="'৳' + ${item.lineTotal}">৳0</span>
+                    <span th:text="'৳' + ${item.price}">৳0</span>
                 </div>
 
                 <div class="checkout-total-row">

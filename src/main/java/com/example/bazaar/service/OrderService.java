@@ -5,33 +5,56 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.example.bazaar.dto.CartItemDto;
 import com.example.bazaar.dto.OrderDto;
+import com.example.bazaar.dto.ProductDto;
 import com.example.bazaar.enums.OrderStatus;
 import com.example.bazaar.enums.PaymentMethod;
 import com.example.bazaar.enums.PaymentStatus;
 import com.example.bazaar.mapper.OrderMapper;
-import com.example.bazaar.model.CartItemEntity;
 import com.example.bazaar.model.OrderEntity;
 import com.example.bazaar.model.OrderItem;
 import com.example.bazaar.model.Payment;
+import com.example.bazaar.model.Product;
 import com.example.bazaar.model.User;
-import com.example.bazaar.repository.OrderRepository;
+import com.example.bazaar.repository.ProductRepository;
 import com.example.bazaar.repository.UserRepository;
 
-import lombok.RequiredArgsConstructor;
-
 @Service
-@RequiredArgsConstructor
 public class OrderService {
 
-    private final OrderRepository orderRepository;
-    private final UserRepository userRepository;
+    private final com.example.bazaar.repository.OrderRepository orderRepository;
+    private final com.example.bazaar.repository.UserRepository userRepository;
     private final CartService cartService;
-    private final OrderMapper orderMapper;
+    private final com.example.bazaar.mapper.OrderMapper orderMapper;
+    private final ProductRepository productRepository;
+
+    public OrderService(
+            com.example.bazaar.repository.OrderRepository orderRepository,
+            com.example.bazaar.repository.UserRepository userRepository,
+            CartService cartService,
+            com.example.bazaar.mapper.OrderMapper orderMapper
+    ) {
+        this(orderRepository, userRepository, cartService, orderMapper, null);
+    }
+
+    @Autowired
+    public OrderService(
+            com.example.bazaar.repository.OrderRepository orderRepository,
+            com.example.bazaar.repository.UserRepository userRepository,
+            CartService cartService,
+            com.example.bazaar.mapper.OrderMapper orderMapper,
+            ProductRepository productRepository
+    ) {
+        this.orderRepository = orderRepository;
+        this.userRepository = userRepository;
+        this.cartService = cartService;
+        this.orderMapper = orderMapper;
+        this.productRepository = productRepository;
+    }
 
     @Transactional
     public OrderEntity placeOrder(String username, PaymentMethod method, String transactionId, String phone) {
@@ -43,7 +66,7 @@ public class OrderService {
             throw new IllegalArgumentException("Please select a payment method.");
         }
 
-        List<CartItemEntity> cartItems = cartService.getCartForUser(username);
+        List<Product> cartItems = cartService.getCartForUser(username);
 
         if (cartItems.isEmpty()) {
             throw new IllegalStateException("Your cart is empty.");
@@ -59,8 +82,8 @@ public class OrderService {
         }
 
         BigDecimal total = cartItems.stream()
-                .map(CartItemEntity::getLineTotal)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
+            .map(product -> product.getPrice() == null ? BigDecimal.ZERO : product.getPrice())
+            .reduce(BigDecimal.ZERO, BigDecimal::add);
 
         OrderEntity order = new OrderEntity();
         order.setUser(user);
@@ -70,16 +93,16 @@ public class OrderService {
         order.setShippingAddress(user.getAddress());
         order.setNote("Order placed by " + username);
 
-        for (CartItemEntity cartItem : cartItems) {
+        for (Product cartProduct : cartItems) {
             OrderItem item = new OrderItem();
             item.setOrder(order);
-            item.setProductId(cartItem.getProductId());
-            item.setProductName(cartItem.getProductName());
-            item.setImageUrl(cartItem.getImageUrl());
-            item.setSize(cartItem.getSize());
-            item.setUnitPrice(cartItem.getUnitPrice());
-            item.setQuantity(cartItem.getQuantity());
-            item.setLineTotal(cartItem.getLineTotal());
+            attachProductReference(item, cartProduct.getId());
+            item.setProductName(cartProduct.getName());
+            item.setImageUrl(cartProduct.getImageUrl());
+            item.setSize("N/A");
+            item.setUnitPrice(cartProduct.getPrice());
+            item.setQuantity(1);
+            item.setLineTotal(cartProduct.getPrice() == null ? BigDecimal.ZERO : cartProduct.getPrice());
             order.getItems().add(item);
         }
 
@@ -133,7 +156,7 @@ public class OrderService {
             throw new IllegalArgumentException("Please select a payment method.");
         }
 
-        List<CartItemDto> cartItems = cartService.getCartDtosForUser(username);
+        List<ProductDto> cartItems = cartService.getCartDtosForUser(username);
 
         if (cartItems.isEmpty()) {
             throw new IllegalStateException("Your cart is empty.");
@@ -149,8 +172,8 @@ public class OrderService {
         }
 
         BigDecimal total = cartItems.stream()
-                .map(CartItemDto::getLineTotal)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
+            .map(product -> product.getPrice() == null ? BigDecimal.ZERO : product.getPrice())
+            .reduce(BigDecimal.ZERO, BigDecimal::add);
 
         OrderEntity order = new OrderEntity();
         order.setUser(user);
@@ -160,16 +183,16 @@ public class OrderService {
         order.setShippingAddress(user.getAddress());
         order.setNote("Order placed by " + username);
 
-        for (CartItemDto cartItem : cartItems) {
+        for (ProductDto cartItem : cartItems) {
             OrderItem item = new OrderItem();
             item.setOrder(order);
-            item.setProductId(cartItem.getProductId());
-            item.setProductName(cartItem.getProductName());
+            attachProductReference(item, cartItem.getId());
+            item.setProductName(cartItem.getName());
             item.setImageUrl(cartItem.getImageUrl());
-            item.setSize(cartItem.getSize());
-            item.setUnitPrice(cartItem.getUnitPrice());
-            item.setQuantity(cartItem.getQuantity());
-            item.setLineTotal(cartItem.getLineTotal());
+            item.setSize("N/A");
+            item.setUnitPrice(cartItem.getPrice());
+            item.setQuantity(1);
+            item.setLineTotal(cartItem.getPrice() == null ? BigDecimal.ZERO : cartItem.getPrice());
             order.getItems().add(item);
         }
 
@@ -193,5 +216,18 @@ public class OrderService {
 
     private boolean isBlank(String value) {
         return value == null || value.isBlank();
+    }
+
+    private void attachProductReference(OrderItem item, Long productId) {
+        if (productId == null) {
+            throw new IllegalArgumentException("Product not found.");
+        }
+
+        if (productRepository != null) {
+            item.setProduct(productRepository.getReferenceById(productId));
+            return;
+        }
+
+        item.setProductId(productId);
     }
 }

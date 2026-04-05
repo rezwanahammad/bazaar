@@ -3,20 +3,30 @@ package com.example.bazaar.mapper;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.example.bazaar.dto.OrderDto;
 import com.example.bazaar.dto.OrderItemDto;
 import com.example.bazaar.model.OrderEntity;
 import com.example.bazaar.model.OrderItem;
-
-import lombok.RequiredArgsConstructor;
+import com.example.bazaar.repository.ProductRepository;
 
 @Component
-@RequiredArgsConstructor
 public class OrderMapper {
 
     private final OrderItemMapper orderItemMapper;
+    private final ProductRepository productRepository;
+
+    public OrderMapper(OrderItemMapper orderItemMapper) {
+        this(orderItemMapper, null);
+    }
+
+    @Autowired
+    public OrderMapper(OrderItemMapper orderItemMapper, ProductRepository productRepository) {
+        this.orderItemMapper = orderItemMapper;
+        this.productRepository = productRepository;
+    }
 
     public OrderDto toDto(OrderEntity entity) {
         if (entity == null) {
@@ -62,7 +72,13 @@ public class OrderMapper {
                 OrderItem item = new OrderItem();
                 item.setId(itemDto.getId());
                 item.setOrder(entity);
-                item.setProductId(itemDto.getProductId());
+                if (itemDto.getProductId() != null) {
+                    if (productRepository != null) {
+                        item.setProduct(productRepository.getReferenceById(itemDto.getProductId()));
+                    } else {
+                        item.setProductId(itemDto.getProductId());
+                    }
+                }
                 item.setProductName(itemDto.getProductName());
                 item.setImageUrl(itemDto.getImageUrl());
                 item.setSize(itemDto.getSize());

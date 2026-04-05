@@ -7,10 +7,12 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.example.bazaar.dto.CartItemDto;
-import com.example.bazaar.mapper.CartItemMapper;
-import com.example.bazaar.model.CartItemEntity;
-import com.example.bazaar.repository.CartRepository;
+import com.example.bazaar.dto.ProductDto;
+import com.example.bazaar.mapper.ProductMapper;
+import com.example.bazaar.model.Product;
+import com.example.bazaar.model.User;
+import com.example.bazaar.repository.ProductRepository;
+import com.example.bazaar.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -18,42 +20,54 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class CartService {
 
-    private final CartRepository cartRepository;
-    private final CartItemMapper cartItemMapper;
+    private final UserRepository userRepository;
+    private final ProductRepository productRepository;
+    private final ProductMapper productMapper;
 
-    public List<CartItemEntity> getCartForUser(String username) {
-        return cartRepository.findByUsernameOrderByIdAsc(username);
+    public List<Product> getCartForUser(String username) {
+        User user = userRepository.findByUsername(username)
+            .orElseThrow(() -> new IllegalArgumentException("User not found."));
+        return List.copyOf(user.getCartProducts());
     }
 
-    public List<CartItemDto> getCartDtosForUser(String username) {
-        return cartRepository.findByUsernameOrderByIdAsc(username)
+    public List<ProductDto> getCartDtosForUser(String username) {
+        return getCartForUser(username)
                 .stream()
-                .map(cartItemMapper::toDto)
+            .map(productMapper::toDto)
                 .collect(Collectors.toList());
     }
 
     @Transactional
     public void addItem(String username, Long productId, String productName,
-                        String imageUrl, BigDecimal price, String size, int quantity) {
-        cartRepository.findByUsernameAndProductIdAndSize(username, productId, size)
-                .ifPresentOrElse(
-                        existing -> {
-                            existing.setQuantity(existing.getQuantity() + quantity);
-                            cartRepository.save(existing);
-                        },
-                        () -> cartRepository.save(
-                                new CartItemEntity(null, username, productId, productName, imageUrl, price, size, quantity)
-                        )
-                );
+            String imageUrl, BigDecimal price, String size, int quantity) {
+        User user = userRepository.findByUsername(username)
+            .orElseThrow(() -> new IllegalArgumentException("User not found."));
+        Product product = productRepository.findById(productId)
+            .orElseThrow(() -> new IllegalArgumentException("Product not found."));
+
+        boolean alreadyInCart = user.getCartProducts().stream()
+            .anyMatch(existing -> productId.equals(existing.getId()));
+
+        if (!alreadyInCart) {
+            user.getCartProducts().add(product);
+            userRepository.save(user);
+        }
     }
 
     @Transactional
     public void removeItem(String username, Long productId, String size) {
-        cartRepository.deleteByUsernameAndProductIdAndSize(username, productId, size);
+        User user = userRepository.findByUsername(username)
+            .orElseThrow(() -> new IllegalArgumentException("User not found."));
+
+        user.getCartProducts().removeIf(product -> productId.equals(product.getId()));
+        userRepository.save(user);
     }
 
     @Transactional
     public void clearCart(String username) {
-        cartRepository.deleteByUsername(username);
+        User user = userRepository.findByUsername(username)
+            .orElseThrow(() -> new IllegalArgumentException("User not found."));
+        user.getCartProducts().clear();
+        userRepository.save(user);
     }
 }
