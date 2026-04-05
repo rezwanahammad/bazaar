@@ -14,39 +14,36 @@ import com.example.bazaar.dto.ProductDto;
 import com.example.bazaar.enums.OrderStatus;
 import com.example.bazaar.enums.PaymentMethod;
 import com.example.bazaar.enums.PaymentStatus;
+import com.example.bazaar.exception.ResourceNotFoundException;
 import com.example.bazaar.mapper.OrderMapper;
 import com.example.bazaar.model.OrderEntity;
 import com.example.bazaar.model.OrderItem;
 import com.example.bazaar.model.Payment;
 import com.example.bazaar.model.Product;
 import com.example.bazaar.model.User;
+import com.example.bazaar.repository.OrderRepository;
 import com.example.bazaar.repository.ProductRepository;
 import com.example.bazaar.repository.UserRepository;
 
 @Service
 public class OrderService {
 
-    private final com.example.bazaar.repository.OrderRepository orderRepository;
-    private final com.example.bazaar.repository.UserRepository userRepository;
+    private final OrderRepository orderRepository;
+    private final UserRepository userRepository;
     private final CartService cartService;
-    private final com.example.bazaar.mapper.OrderMapper orderMapper;
+    private final OrderMapper orderMapper;
     private final ProductRepository productRepository;
 
-    public OrderService(
-            com.example.bazaar.repository.OrderRepository orderRepository,
-            com.example.bazaar.repository.UserRepository userRepository,
-            CartService cartService,
-            com.example.bazaar.mapper.OrderMapper orderMapper
-    ) {
+    public OrderService(OrderRepository orderRepository, UserRepository userRepository, CartService cartService, OrderMapper orderMapper) {
         this(orderRepository, userRepository, cartService, orderMapper, null);
     }
 
     @Autowired
     public OrderService(
-            com.example.bazaar.repository.OrderRepository orderRepository,
-            com.example.bazaar.repository.UserRepository userRepository,
+            OrderRepository orderRepository,
+            UserRepository userRepository,
             CartService cartService,
-            com.example.bazaar.mapper.OrderMapper orderMapper,
+            OrderMapper orderMapper,
             ProductRepository productRepository
     ) {
         this.orderRepository = orderRepository;
@@ -60,7 +57,7 @@ public class OrderService {
     public OrderEntity placeOrder(String username, PaymentMethod method, String transactionId, String phone) {
 
         User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new IllegalArgumentException("User not found."));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found."));
 
         if (method == null) {
             throw new IllegalArgumentException("Please select a payment method.");
@@ -137,12 +134,12 @@ public class OrderService {
 
     public OrderEntity getOrderForUser(Long orderId, String username) {
         return orderRepository.findByIdAndUserUsername(orderId, username)
-                .orElseThrow(() -> new IllegalArgumentException("Order not found."));
+                .orElseThrow(() -> new ResourceNotFoundException("Order not found."));
     }
 
     public OrderDto getOrderDtoForUser(Long orderId, String username) {
         OrderEntity order = orderRepository.findByIdAndUserUsername(orderId, username)
-                .orElseThrow(() -> new IllegalArgumentException("Order not found."));
+                .orElseThrow(() -> new ResourceNotFoundException("Order not found."));
         return orderMapper.toDto(order);
     }
 
@@ -150,7 +147,7 @@ public class OrderService {
     public OrderDto placeOrderDto(String username, PaymentMethod method, String transactionId, String phone) {
 
         User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new IllegalArgumentException("User not found."));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found."));
 
         if (method == null) {
             throw new IllegalArgumentException("Please select a payment method.");
@@ -220,7 +217,7 @@ public class OrderService {
 
     private void attachProductReference(OrderItem item, Long productId) {
         if (productId == null) {
-            throw new IllegalArgumentException("Product not found.");
+            throw new ResourceNotFoundException("Product not found.");
         }
 
         if (productRepository != null) {

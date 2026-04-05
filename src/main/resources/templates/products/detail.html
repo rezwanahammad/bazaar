@@ -52,6 +52,11 @@
 
                     <p class="product-brand-line" th:text="'Brand : ' + (${product.brand != null and !#strings.isEmpty(product.brand)} ? ${product.brand} : 'N/A')">Brand : N/A</p>
 
+                <p class="product-seller-line">
+                    <strong>Seller:</strong> 
+                    <a th:href="@{/seller(username=${product.sellerUsername})}" th:text="${product.sellerUsername}" class="seller-profile-link">Seller Name</a>
+                </p>
+
                     <div class="qty-row">
                         <button type="button" id="qtyDecreaseBtn">-</button>
                         <span id="qtyDisplay">1</span>

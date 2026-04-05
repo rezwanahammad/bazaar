@@ -1,6 +1,7 @@
 package com.example.bazaar.service;
 
 import com.example.bazaar.enums.Category;
+import com.example.bazaar.exception.ResourceNotFoundException;
 import com.example.bazaar.mapper.ProductMapper;
 import com.example.bazaar.model.Product;
 import com.example.bazaar.repository.ProductRepository;
@@ -59,7 +60,7 @@ class ProductServiceTest {
     void testGetProductByIdNotFound() {
         when(productRepository.findById(1L)).thenReturn(Optional.empty());
 
-        assertThrows(RuntimeException.class,
+        assertThrows(ResourceNotFoundException.class,
                 () -> productService.getProductById(1L));
     }
 
@@ -144,7 +145,7 @@ class ProductServiceTest {
         when(productRepository.findByIdAndSellerUsername(1L, "seller"))
                 .thenReturn(Optional.empty());
 
-        assertThrows(IllegalArgumentException.class,
+        assertThrows(ResourceNotFoundException.class,
                 () -> productService.getProductByIdAndSeller(1L, "seller"));
     }
 }

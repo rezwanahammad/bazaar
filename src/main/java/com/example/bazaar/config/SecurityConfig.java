@@ -16,9 +16,11 @@ public class SecurityConfig {
         http
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/register", "/login", "/css/**", "/js/**", "/images/**").permitAll()
-                .requestMatchers(HttpMethod.GET, "/", "/products", "/products/**").permitAll()
+                .requestMatchers(HttpMethod.GET, "/", "/products", "/products/**", "/seller").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/products", "/api/products/**").permitAll()
+                .requestMatchers("/api/cart/**", "/api/orders/**").hasAnyRole("BUYER", "ADMIN")
                 .requestMatchers("/admin", "/admin/**").hasRole("ADMIN")
-                .requestMatchers("/seller", "/seller/**").hasAnyRole("SELLER", "ADMIN")
+                .requestMatchers("/seller/products/**", "/seller/create", "/seller/edit/**").hasAnyRole("SELLER", "ADMIN")
                 .requestMatchers("/cart/**", "/checkout/**", "/orders/**").hasAnyRole("BUYER", "ADMIN")
                 .anyRequest().authenticated()
             )
